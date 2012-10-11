@@ -50,4 +50,12 @@ public class DatabaseManager {
 				.orderBy("published", false).where().eq("feed_id", feedId)
 				.query();
 	}
+
+	public void saveItem(final Item item) throws SQLException {
+		getHelper().getItemDao().createOrUpdate(item);
+	}
+
+	public Item getItem(final int itemId) throws SQLException {
+		return getHelper().getItemDao().queryForId(itemId);
+	}
 }

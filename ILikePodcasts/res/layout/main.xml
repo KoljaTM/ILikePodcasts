@@ -1,27 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ViewAnimator xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/fragment_container"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical" >
-    
-	<Button android:id="@+id/startButton"
-	    android:layout_width="match_parent"
-    	android:layout_height="wrap_content"/>
+    android:layout_height="wrap_content">
 
-	<LinearLayout android:id="@+id/fragment_container"
-	     	android:layout_width="match_parent"
-		    android:layout_height="wrap_content"
-		    android:orientation="vertical">
-	    
-		<fragment android:name="de.vanmar.android.ilikepodcasts.fragment.FeedsFragment_"
-	            android:id="@+id/feedsFragment"
-	            android:layout_width="match_parent"
-	    	    android:layout_height="wrap_content"/>
-	
-		<fragment android:name="de.vanmar.android.ilikepodcasts.fragment.EpisodesFragment_"
-	            android:id="@+id/episodesFragment"
-	            android:layout_width="match_parent"
-	    	    android:layout_height="wrap_content"/>
-	</LinearLayout>
-	
-</LinearLayout>
+    <fragment
+        android:id="@+id/feedsFragment"
+        android:name="de.vanmar.android.ilikepodcasts.fragment.FeedsFragment_"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+	<fragment android:name="de.vanmar.android.ilikepodcasts.fragment.EpisodesFragment_"
+            android:id="@+id/episodesFragment"
+            android:layout_width="match_parent"
+    	    android:layout_height="wrap_content"/>
+    
+</ViewAnimator>

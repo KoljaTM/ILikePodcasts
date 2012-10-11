@@ -3,7 +3,6 @@ package de.vanmar.android.ilikepodcasts;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
@@ -18,12 +17,18 @@ import android.os.ResultReceiver;
 import com.googlecode.androidannotations.annotations.Bean;
 import com.googlecode.androidannotations.annotations.EService;
 
+import de.vanmar.android.ilikepodcasts.bo.Item;
+import de.vanmar.android.ilikepodcasts.db.DatabaseManager;
 import de.vanmar.android.ilikepodcasts.util.UiHelper;
 
 @EService
 public class DownloadService extends IntentService {
 
 	public static final int UPDATE_PROGRESS = 8344;
+
+	private static final String FILE_PREFIX = "ILikePodcasts/Podcast_";
+
+	public static final String EXTRA_ITEM = "de.vanmar.android.ilikepodcasts.downloadservice.item";
 
 	@Bean
 	UiHelper uiHelper;
@@ -34,14 +39,15 @@ public class DownloadService extends IntentService {
 
 	@Override
 	protected void onHandleIntent(final Intent intent) {
-		final String urlToDownload = intent.getStringExtra("url");
-		final ResultReceiver receiver = (ResultReceiver) intent
-				.getParcelableExtra("receiver");
-
 		OutputStream output = null;
 		InputStream input = null;
 		try {
-			final URL url = new URL(urlToDownload);
+			final Item itemToDownload = (Item) intent.getExtras().get(
+					EXTRA_ITEM);
+			final ResultReceiver receiver = (ResultReceiver) intent
+					.getParcelableExtra("receiver");
+
+			final URL url = new URL(itemToDownload.getMediaUrl());
 			final URLConnection connection = url.openConnection();
 			connection.connect();
 			// this will be useful so that you can show a typical 0-100%
@@ -56,8 +62,9 @@ public class DownloadService extends IntentService {
 
 			// download the file
 			input = new BufferedInputStream(url.openStream());
-			output = new FileOutputStream(new File(SDCardRoot,
-					"ILikePodcasts/test2.mp3"));
+			final String filename = FILE_PREFIX
+					+ itemToDownload.getMediaUrl().hashCode() + ".mp3";
+			output = new FileOutputStream(new File(SDCardRoot, filename));
 
 			final byte data[] = new byte[1024];
 			long total = 0;
@@ -70,11 +77,12 @@ public class DownloadService extends IntentService {
 				receiver.send(UPDATE_PROGRESS, resultData);
 				output.write(data, 0, count);
 			}
-
-			output.flush();
-			output.close();
-			input.close();
-		} catch (final IOException e) {
+			final Bundle resultData = new Bundle();
+			receiver.send(UPDATE_PROGRESS, resultData);
+			itemToDownload.setMediaPath(filename);
+			DatabaseManager.getInstance().saveItem(itemToDownload);
+			resultData.putInt("progress", 100);
+		} catch (final Exception e) {
 			uiHelper.displayError(e);
 		} finally {
 			if (output != null) {
@@ -92,9 +100,6 @@ public class DownloadService extends IntentService {
 			}
 		}
 
-		final Bundle resultData = new Bundle();
-		resultData.putInt("progress", 100);
-		receiver.send(UPDATE_PROGRESS, resultData);
 	}
 
 }

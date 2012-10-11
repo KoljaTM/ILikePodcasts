@@ -1,4 +1,4 @@
-package de.vanmar.android.ilikepodcasts.test;
+package de.vanmar.android.ilikepodcasts;
 
 import android.test.ActivityInstrumentationTestCase2;
 import de.vanmar.android.ilikepodcasts.MainActivity_;

@@ -25,6 +25,8 @@ import com.googlecode.androidannotations.annotations.ViewById;
 
 import de.vanmar.android.ilikepodcasts.DownloadService;
 import de.vanmar.android.ilikepodcasts.DownloadService_;
+import de.vanmar.android.ilikepodcasts.MediaPlayerService;
+import de.vanmar.android.ilikepodcasts.MediaPlayerService_;
 import de.vanmar.android.ilikepodcasts.R;
 import de.vanmar.android.ilikepodcasts.bo.Feed;
 import de.vanmar.android.ilikepodcasts.bo.Item;
@@ -78,7 +80,11 @@ public class EpisodesFragment extends Fragment {
 			rowView.setOnClickListener(new OnClickListener() {
 				@Override
 				public void onClick(final View v) {
-					startDownload(item, holder);
+					if (item.getMediaPath() == null) {
+						startDownload(item, holder);
+					} else {
+						playItem(item);
+					}
 				}
 			});
 
@@ -90,6 +96,8 @@ public class EpisodesFragment extends Fragment {
 	ListView episodelist;
 
 	private EpisodesFragmentListener handler;
+
+	private Feed feed;
 
 	@Override
 	public void onAttach(final Activity activity) {
@@ -109,6 +117,7 @@ public class EpisodesFragment extends Fragment {
 
 	@Background
 	public void onFeedSelected(final Feed feed) {
+		this.feed = feed;
 		try {
 			final List<Item> items = DatabaseManager.getInstance()
 					.getAllItemsOrdered(feed.getId());
@@ -127,7 +136,7 @@ public class EpisodesFragment extends Fragment {
 	protected void startDownload(final Item item, final ViewHolder holder) {
 		final Intent intent = new Intent(this.getActivity(),
 				DownloadService_.class);
-		intent.putExtra("url", item.getMediaUrl());
+		intent.putExtra(DownloadService.EXTRA_ITEM, item);
 		intent.putExtra("receiver", new ResultReceiver(new Handler()) {
 			@Override
 			protected void onReceiveResult(final int resultCode,
@@ -136,9 +145,19 @@ public class EpisodesFragment extends Fragment {
 				if (resultCode == DownloadService.UPDATE_PROGRESS) {
 					final int progress = resultData.getInt("progress");
 					holder.progress.setText(String.valueOf(progress));
+					if (progress == 100) {
+						onFeedSelected(feed);
+					}
 				}
 			}
 		});
+		this.getActivity().startService(intent);
+	}
+
+	private void playItem(final Item item) {
+		final Intent intent = new Intent(this.getActivity(),
+				MediaPlayerService_.class);
+		intent.putExtra(MediaPlayerService.EXTRA_ITEM, item);
 		this.getActivity().startService(intent);
 	}
 

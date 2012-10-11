@@ -37,6 +37,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 		try {
 			TableUtils.createTable(connectionSource, Feed.class);
 			TableUtils.createTable(connectionSource, Item.class);
+			database.execSQL("insert into feed(url, title) values('http://www.merriam-webster.com/word/index.xml', 'Word a Day')");
 		} catch (final SQLException e) {
 			Log.e(DatabaseHelper.class.getName(), "Can't create database", e);
 			throw new RuntimeException(e);

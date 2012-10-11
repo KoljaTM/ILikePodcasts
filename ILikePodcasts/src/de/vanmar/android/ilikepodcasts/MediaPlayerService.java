@@ -28,7 +28,7 @@ public class MediaPlayerService extends Service {
 	@Bean
 	UiHelper uiHelper;
 
-	public static final String EXTRA_ITEM = "mediaplayerservice.location";
+	public static final String EXTRA_ITEM = "de.vanmar.android.ilikepodcasts.mediaplayerservice.location";
 
 	Queue<String> pathsToPlay = new LinkedList<String>();
 
