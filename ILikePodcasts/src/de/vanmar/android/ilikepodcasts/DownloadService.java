@@ -18,6 +18,7 @@ import com.googlecode.androidannotations.annotations.Bean;
 import com.googlecode.androidannotations.annotations.EService;
 
 import de.vanmar.android.ilikepodcasts.bo.Item;
+import de.vanmar.android.ilikepodcasts.content.EpisodeContentProvider;
 import de.vanmar.android.ilikepodcasts.db.DatabaseManager;
 import de.vanmar.android.ilikepodcasts.util.UiHelper;
 
@@ -82,6 +83,8 @@ public class DownloadService extends IntentService {
 			itemToDownload.setMediaPath(filename);
 			DatabaseManager.getInstance().saveItem(itemToDownload);
 			resultData.putInt("progress", 100);
+			getContentResolver().notifyChange(
+					EpisodeContentProvider.CONTENT_URI, null);
 		} catch (final Exception e) {
 			uiHelper.displayError(e);
 		} finally {

@@ -1,0 +1,102 @@
+package de.vanmar.android.ilikepodcasts.content;
+
+import android.content.ContentProvider;
+import android.content.ContentResolver;
+import android.content.ContentValues;
+import android.content.UriMatcher;
+import android.database.Cursor;
+import android.net.Uri;
+import android.util.Log;
+import de.vanmar.android.ilikepodcasts.db.DatabaseManager;
+
+public class EpisodeContentProvider extends ContentProvider {
+
+	private static final String AUTHORITY = "de.vanmar.android.ilikepodcasts.EpisodeContentProvider";
+	public static final int EPISODES = 100;
+	public static final int FEED = 110;
+	public static final int EPISODE_ID = 120;
+	private static final String EPISODES_BASE_PATH = "episodes";
+	private static final String FEED_PATH = "/feed";
+	public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY
+			+ "/" + EPISODES_BASE_PATH);
+	public static final String CONTENT_FEED_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE
+			+ FEED_PATH;
+	public static final String CONTENT_ITEM_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE
+			+ "/episodes";
+	public static final String CONTENT_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE
+			+ "/episodes";
+
+	private DatabaseManager dbManager;
+
+	private static final UriMatcher sURIMatcher = new UriMatcher(
+			UriMatcher.NO_MATCH);
+	static {
+		sURIMatcher.addURI(AUTHORITY, EPISODES_BASE_PATH, EPISODES);
+		sURIMatcher.addURI(AUTHORITY, EPISODES_BASE_PATH + "/feed/#", FEED);
+		sURIMatcher.addURI(AUTHORITY, EPISODES_BASE_PATH + "/#", EPISODE_ID);
+	}
+
+	@Override
+	public boolean onCreate() {
+		DatabaseManager.init(getContext());
+		dbManager = DatabaseManager.getInstance();
+		return true;
+	}
+
+	@Override
+	public int delete(final Uri uri, final String selection,
+			final String[] selectionArgs) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public String getType(final Uri uri) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Uri insert(final Uri uri, final ContentValues values) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Cursor query(final Uri uri, final String[] projection,
+			final String selection, final String[] selectionArgs,
+			final String sortOrder) {
+
+		try {
+			final int uriType = sURIMatcher.match(uri);
+			switch (uriType) {
+			case EPISODE_ID:
+				return null;
+			case EPISODES:
+				// no filter
+				return dbManager.getItemsAsCursor(projection);
+			case FEED:
+				// by feed
+				final int feedId = Integer.parseInt(uri.getLastPathSegment());
+				final Cursor itemsAsCursor = dbManager.getItemsAsCursor(
+						projection, feedId);
+				itemsAsCursor.setNotificationUri(getContext()
+						.getContentResolver(), uri);
+				return itemsAsCursor;
+			default:
+				throw new IllegalArgumentException("Unknown URI");
+			}
+		} catch (final Exception e) {
+			Log.e("EpisodeContentProvider", e.getMessage(), e);
+			return null;
+		}
+	}
+
+	@Override
+	public int update(final Uri uri, final ContentValues values,
+			final String selection, final String[] selectionArgs) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+}

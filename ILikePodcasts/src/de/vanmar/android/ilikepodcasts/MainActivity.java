@@ -1,6 +1,9 @@
 package de.vanmar.android.ilikepodcasts;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.ResultReceiver;
 import android.support.v4.app.FragmentActivity;
 import android.widget.ViewAnimator;
 
@@ -53,7 +56,6 @@ public class MainActivity extends FragmentActivity implements
 	@Override
 	protected void onStart() {
 		super.onStart();
-		feedsFragment.loadFeeds();
 	}
 
 	@OptionsItem(R.id.refresh)
@@ -64,7 +66,6 @@ public class MainActivity extends FragmentActivity implements
 		} catch (final Exception e) {
 			uiHelper.displayError(e);
 		}
-		feedsFragment.loadFeeds();
 	}
 
 	@Override
@@ -84,5 +85,37 @@ public class MainActivity extends FragmentActivity implements
 
 	@Override
 	public void onItemSelected(final Item item) {
+		if (item.getMediaPath() == null) {
+			startDownload(item);
+		} else {
+			playItem(item);
+		}
 	}
+
+	protected void startDownload(final Item item) {
+		final Intent intent = new Intent(this, DownloadService_.class);
+		intent.putExtra(DownloadService.EXTRA_ITEM, item);
+		intent.putExtra("receiver", new ResultReceiver(new Handler()) {
+			@Override
+			protected void onReceiveResult(final int resultCode,
+					final Bundle resultData) {
+				super.onReceiveResult(resultCode, resultData);
+				if (resultCode == DownloadService.UPDATE_PROGRESS) {
+					final int progress = resultData.getInt("progress");
+					// holder.progress.setText(String.valueOf(progress));
+					if (progress == 100) {
+						// // onFeedSelected(feed);
+					}
+				}
+			}
+		});
+		startService(intent);
+	}
+
+	private void playItem(final Item item) {
+		final Intent intent = new Intent(this, MediaPlayerService_.class);
+		intent.putExtra(MediaPlayerService.EXTRA_ITEM, item);
+		startService(intent);
+	}
+
 }

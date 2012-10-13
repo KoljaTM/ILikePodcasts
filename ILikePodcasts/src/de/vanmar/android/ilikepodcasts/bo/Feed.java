@@ -13,10 +13,13 @@ public class Feed implements Serializable {
 
 	private static final long serialVersionUID = 3305921168913468529L;
 
-	@DatabaseField(generatedId = true)
+	public static final String ID = "_id";
+	public static final String TITLE = "title";
+
+	@DatabaseField(generatedId = true, columnName = ID)
 	private int id;
 
-	@DatabaseField
+	@DatabaseField(columnName = TITLE)
 	private String title;
 
 	@DatabaseField

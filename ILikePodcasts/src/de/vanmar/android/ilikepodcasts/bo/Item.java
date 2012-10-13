@@ -9,34 +9,45 @@ public class Item implements Serializable {
 
 	private static final long serialVersionUID = 8617289772343323484L;
 
-	@DatabaseField(generatedId = true)
+	public static final String ID = "_id";
+	public static final String TITLE = "title";
+	public static final String DESCRIPTION = "description";
+	public static final String URL = "url";
+	public static final String PUBLISHED = "published";
+	public static final String MEDIA_URL = "media_url";
+	public static final String MEDIA_LENGTH = "media_length";
+	public static final String MEDIA_PATH = "media_path";
+	public static final String MEDIA_TYPE = "media_type";
+	public static final String FEED = "feed_id";
+
+	@DatabaseField(generatedId = true, columnName = ID)
 	private int id;
 
-	@DatabaseField
+	@DatabaseField(columnName = TITLE)
 	private String title;
 
-	@DatabaseField
+	@DatabaseField(columnName = DESCRIPTION)
 	private String description;
 
-	@DatabaseField
+	@DatabaseField(columnName = URL)
 	private String url;
 
-	@DatabaseField
+	@DatabaseField(columnName = PUBLISHED)
 	private Date published;
 
-	@DatabaseField
+	@DatabaseField(columnName = MEDIA_URL)
 	private String mediaUrl;
 
-	@DatabaseField
+	@DatabaseField(columnName = MEDIA_LENGTH)
 	private Long mediaLength;
 
-	@DatabaseField
+	@DatabaseField(columnName = MEDIA_PATH)
 	private String mediaPath;
 
-	@DatabaseField
+	@DatabaseField(columnName = MEDIA_TYPE)
 	private String mediaType;
 
-	@DatabaseField(foreign = true, foreignAutoRefresh = true)
+	@DatabaseField(foreign = true, foreignAutoRefresh = true, columnName = FEED)
 	private Feed feed;
 
 	public int getId() {

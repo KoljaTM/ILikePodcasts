@@ -1,118 +1,84 @@
 package de.vanmar.android.ilikepodcasts.fragment;
 
-import java.sql.SQLException;
-import java.util.List;
-
 import android.app.Activity;
+import android.database.Cursor;
+import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.widget.ListView;
-import android.widget.TextView;
 
-import com.googlecode.androidannotations.annotations.Background;
+import com.googlecode.androidannotations.annotations.AfterViews;
 import com.googlecode.androidannotations.annotations.Bean;
 import com.googlecode.androidannotations.annotations.EFragment;
-import com.googlecode.androidannotations.annotations.UiThread;
 import com.googlecode.androidannotations.annotations.ViewById;
 
 import de.vanmar.android.ilikepodcasts.R;
 import de.vanmar.android.ilikepodcasts.bo.Feed;
-import de.vanmar.android.ilikepodcasts.db.DatabaseManager;
+import de.vanmar.android.ilikepodcasts.content.FeedContentProvider;
 import de.vanmar.android.ilikepodcasts.util.UiHelper;
 
 @EFragment(R.layout.feeds)
-public class FeedsFragment extends Fragment {
+public class FeedsFragment extends Fragment implements
+		LoaderManager.LoaderCallbacks<Cursor> {
 
 	public interface FeedsFragmentListener {
 		void onFeedSelected(Feed feed);
 	}
 
+	private static final int FEED_LIST_LOADER = 1;
+
 	@Bean
 	UiHelper uiHelper;
-
-	private final class FeedListAdapter extends ArrayAdapter<Feed> {
-		private final Activity context;
-		private final List<Feed> feeds;
-
-		private FeedListAdapter(final Activity context,
-				final int textViewResourceId, final List<Feed> feeds) {
-			super(context, textViewResourceId, feeds);
-			this.context = context;
-			this.feeds = feeds;
-		}
-
-		class ViewHolder {
-			public TextView title;
-		}
-
-		@Override
-		public final View getView(final int position, final View convertView,
-				final ViewGroup parent) {
-			View rowView = convertView;
-			if (rowView == null) {
-				final LayoutInflater inflater = context.getLayoutInflater();
-				rowView = inflater.inflate(R.layout.feeditem, null);
-				final ViewHolder viewHolder = new ViewHolder();
-				viewHolder.title = (TextView) rowView.findViewById(R.id.title);
-				rowView.setTag(viewHolder);
-			}
-
-			final ViewHolder holder = (ViewHolder) rowView.getTag();
-			final Feed feed = feeds.get(position);
-			holder.title.setText(feed.getTitle());
-
-			rowView.setOnClickListener(new OnClickListener() {
-				@Override
-				public void onClick(final View v) {
-					handler.onFeedSelected(feed);
-				}
-			});
-
-			return rowView;
-		}
-	}
 
 	@ViewById(R.id.feedlist)
 	ListView feedlist;
 
-	private FeedsFragmentListener handler;
+	private FeedsListAdapter adapter;
+
+	@Override
+	public void onCreate(final Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+	}
+
+	@AfterViews
+	void afterViews() {
+		final String[] uiBindFrom = { Feed.TITLE };
+		final int[] uiBindTo = { R.id.title };
+		getLoaderManager().initLoader(FEED_LIST_LOADER, null, this);
+
+		adapter = new FeedsListAdapter(getActivity(),
+				(FeedsFragmentListener) getActivity(), uiHelper,
+				R.layout.feeditem, null, uiBindFrom, uiBindTo, 0);
+		feedlist.setAdapter(adapter);
+	}
 
 	@Override
 	public void onAttach(final Activity activity) {
 		super.onAttach(activity);
-		try {
-			this.handler = (FeedsFragmentListener) activity;
-		} catch (final ClassCastException e) {
-			throw new ClassCastException(activity.toString()
-					+ " must implement FeedsFragmentListener");
-		}
 	}
 
 	@Override
 	public void onStart() {
 		super.onStart();
-
-		loadFeeds();
 	}
 
-	@Background
-	public void loadFeeds() {
-		List<Feed> feeds;
-		try {
-			feeds = DatabaseManager.getInstance().getAllFeeds();
-			displayFeeds(feeds);
-		} catch (final SQLException e) {
-			uiHelper.displayError(e);
-		}
+	@Override
+	public Loader<Cursor> onCreateLoader(final int id, final Bundle args) {
+		final CursorLoader cursorLoader = new CursorLoader(getActivity(),
+				FeedContentProvider.CONTENT_URI, FeedsListAdapter.projection,
+				null, null, null);
+		return cursorLoader;
 	}
 
-	@UiThread
-	void displayFeeds(final List<Feed> feeds) {
-		feedlist.setAdapter(new FeedListAdapter(getActivity(), R.id.feedlist,
-				feeds));
+	@Override
+	public void onLoadFinished(final Loader<Cursor> loader, final Cursor cursor) {
+		adapter.swapCursor(cursor);
+	}
+
+	@Override
+	public void onLoaderReset(final Loader<Cursor> loader) {
+		adapter.swapCursor(null);
 	}
 }

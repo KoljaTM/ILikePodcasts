@@ -24,6 +24,18 @@
             </intent-filter>
         </activity>
       
+        <provider
+		      android:name=".content.FeedContentProvider"
+		      android:authorities="de.vanmar.android.ilikepodcasts.FeedContentProvider"
+		      android:exported="false">
+        </provider>
+        
+        <provider
+		      android:name=".content.EpisodeContentProvider"
+		      android:authorities="de.vanmar.android.ilikepodcasts.EpisodeContentProvider"
+		      android:exported="false">
+        </provider>
+        
         <service
             android:name=".MediaPlayerService_" >
         </service>
