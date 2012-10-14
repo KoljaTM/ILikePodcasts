@@ -1,5 +1,7 @@
 package de.vanmar.android.ilikepodcasts;
 
+import java.sql.SQLException;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -17,20 +19,24 @@ import com.googlecode.androidannotations.annotations.ViewById;
 
 import de.vanmar.android.ilikepodcasts.bo.Feed;
 import de.vanmar.android.ilikepodcasts.bo.Item;
+import de.vanmar.android.ilikepodcasts.content.EpisodeContentProvider;
 import de.vanmar.android.ilikepodcasts.db.DatabaseManager;
 import de.vanmar.android.ilikepodcasts.fragment.EpisodesFragment;
 import de.vanmar.android.ilikepodcasts.fragment.EpisodesFragment.EpisodesFragmentListener;
 import de.vanmar.android.ilikepodcasts.fragment.FeedsFragment;
 import de.vanmar.android.ilikepodcasts.fragment.FeedsFragment.FeedsFragmentListener;
+import de.vanmar.android.ilikepodcasts.fragment.PlaylistFragment.PlaylistFragmentListener;
 import de.vanmar.android.ilikepodcasts.util.UiHelper;
 
 @EActivity(R.layout.main)
 @OptionsMenu(R.menu.menu)
 public class MainActivity extends FragmentActivity implements
-		FeedsFragmentListener, EpisodesFragmentListener {
+		FeedsFragmentListener, EpisodesFragmentListener,
+		PlaylistFragmentListener {
 
 	private static final int CHILD_FEED_FRAGMENT = 0;
 	private static final int CHILD_EPISODES_FRAGMENT = 1;
+	private static final int CHILD_PLAYLIST_FRAGMENT = 2;
 
 	@Bean
 	RssLoader rssLoader;
@@ -78,6 +84,8 @@ public class MainActivity extends FragmentActivity implements
 	public void onBackPressed() {
 		if (fragmentContainer.getDisplayedChild() == CHILD_FEED_FRAGMENT) {
 			super.onBackPressed();
+		} else if (fragmentContainer.getDisplayedChild() == CHILD_PLAYLIST_FRAGMENT) {
+			fragmentContainer.setDisplayedChild(CHILD_EPISODES_FRAGMENT);
 		} else {
 			fragmentContainer.setDisplayedChild(CHILD_FEED_FRAGMENT);
 		}
@@ -88,7 +96,14 @@ public class MainActivity extends FragmentActivity implements
 		if (item.getMediaPath() == null) {
 			startDownload(item);
 		} else {
-			playItem(item);
+			try {
+				DatabaseManager.getInstance().enqueueItem(item);
+				getContentResolver().notifyChange(
+						EpisodeContentProvider.CONTENT_URI, null);
+				fragmentContainer.setDisplayedChild(CHILD_PLAYLIST_FRAGMENT);
+			} catch (final SQLException e) {
+				uiHelper.displayError(e);
+			}
 		}
 	}
 
@@ -112,7 +127,8 @@ public class MainActivity extends FragmentActivity implements
 		startService(intent);
 	}
 
-	private void playItem(final Item item) {
+	@Override
+	public void onItemPlay(final Item item) {
 		final Intent intent = new Intent(this, MediaPlayerService_.class);
 		intent.putExtra(MediaPlayerService.EXTRA_ITEM, item);
 		startService(intent);

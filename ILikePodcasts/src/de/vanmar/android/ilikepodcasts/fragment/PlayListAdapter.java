@@ -12,27 +12,26 @@ import android.widget.TextView;
 import de.vanmar.android.ilikepodcasts.R;
 import de.vanmar.android.ilikepodcasts.bo.Item;
 import de.vanmar.android.ilikepodcasts.db.DatabaseManager;
-import de.vanmar.android.ilikepodcasts.fragment.EpisodesFragment.EpisodesFragmentListener;
+import de.vanmar.android.ilikepodcasts.fragment.PlaylistFragment.PlaylistFragmentListener;
 import de.vanmar.android.ilikepodcasts.util.UiHelper;
 
-public class EpisodeListAdapter extends SimpleCursorAdapter {
+public class PlayListAdapter extends SimpleCursorAdapter {
 	public static final String[] projection = new String[] { Item.ID,
 			Item.TITLE, Item.MEDIA_PATH };
 
-	private EpisodesFragmentListener handler;
+	private PlaylistFragmentListener handler;
 	private UiHelper uiHelper;
 	private DatabaseManager dbManager;
 
 	private static class ViewHolder {
-		public TextView download;
 		public TextView play;
 	}
 
-	protected EpisodeListAdapter(final Activity context,
-			final EpisodesFragmentListener handler, final UiHelper uiHelper,
+	protected PlayListAdapter(final Activity context,
+			final PlaylistFragmentListener handler, final UiHelper uiHelper,
 			final Cursor cursor, final String[] from, final int[] to,
 			final int flags) {
-		super(context, R.layout.episodesitem, cursor, from, to, flags);
+		super(context, R.layout.playlistitem, cursor, from, to, flags);
 		this.handler = handler;
 		this.uiHelper = uiHelper;
 		this.dbManager = DatabaseManager.getInstance();
@@ -45,7 +44,6 @@ public class EpisodeListAdapter extends SimpleCursorAdapter {
 
 		if (view.getTag() == null) {
 			final ViewHolder viewHolder = new ViewHolder();
-			viewHolder.download = (TextView) view.findViewById(R.id.download);
 			viewHolder.play = (TextView) view.findViewById(R.id.play);
 			view.setTag(viewHolder);
 		}
@@ -53,10 +51,8 @@ public class EpisodeListAdapter extends SimpleCursorAdapter {
 		final ViewHolder holder = (ViewHolder) view.getTag();
 		final String mediaPath = getCursor().getString(2);
 		if (mediaPath == null) {
-			holder.download.setVisibility(View.VISIBLE);
 			holder.play.setVisibility(View.GONE);
 		} else {
-			holder.download.setVisibility(View.GONE);
 			holder.play.setVisibility(View.VISIBLE);
 		}
 
@@ -66,7 +62,7 @@ public class EpisodeListAdapter extends SimpleCursorAdapter {
 			view.setOnClickListener(new OnClickListener() {
 				@Override
 				public void onClick(final View v) {
-					handler.onItemSelected(item);
+					handler.onItemPlay(item);
 				}
 			});
 		} catch (final SQLException e) {

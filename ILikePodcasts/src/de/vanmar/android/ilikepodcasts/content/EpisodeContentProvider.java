@@ -15,12 +15,16 @@ public class EpisodeContentProvider extends ContentProvider {
 	public static final int EPISODES = 100;
 	public static final int FEED = 110;
 	public static final int EPISODE_ID = 120;
+	public static final int PLAYLIST = 130;
 	private static final String EPISODES_BASE_PATH = "episodes";
 	private static final String FEED_PATH = "/feed";
+	private static final String PLAYLIST_PATH = "/playlist";
 	public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY
 			+ "/" + EPISODES_BASE_PATH);
 	public static final String CONTENT_FEED_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE
 			+ FEED_PATH;
+	public static final String CONTENT_PLAYLIST_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE
+			+ PLAYLIST_PATH;
 	public static final String CONTENT_ITEM_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE
 			+ "/episodes";
 	public static final String CONTENT_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE
@@ -33,6 +37,8 @@ public class EpisodeContentProvider extends ContentProvider {
 	static {
 		sURIMatcher.addURI(AUTHORITY, EPISODES_BASE_PATH, EPISODES);
 		sURIMatcher.addURI(AUTHORITY, EPISODES_BASE_PATH + "/feed/#", FEED);
+		sURIMatcher.addURI(AUTHORITY, EPISODES_BASE_PATH + "/playlist",
+				PLAYLIST);
 		sURIMatcher.addURI(AUTHORITY, EPISODES_BASE_PATH + "/#", EPISODE_ID);
 	}
 
@@ -83,6 +89,13 @@ public class EpisodeContentProvider extends ContentProvider {
 				itemsAsCursor.setNotificationUri(getContext()
 						.getContentResolver(), uri);
 				return itemsAsCursor;
+			case PLAYLIST:
+				// playlist
+				final Cursor playlistAsCursor = dbManager
+						.getPlaylistAsCursor(projection);
+				playlistAsCursor.setNotificationUri(getContext()
+						.getContentResolver(), uri);
+				return playlistAsCursor;
 			default:
 				throw new IllegalArgumentException("Unknown URI");
 			}

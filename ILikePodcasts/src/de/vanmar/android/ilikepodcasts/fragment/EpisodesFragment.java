@@ -52,8 +52,8 @@ public class EpisodesFragment extends Fragment implements
 		final int[] uiBindTo = { R.id.title };
 
 		adapter = new EpisodeListAdapter(getActivity(),
-				(EpisodesFragmentListener) getActivity(), uiHelper,
-				R.layout.episodesitem, null, uiBindFrom, uiBindTo, 0);
+				(EpisodesFragmentListener) getActivity(), uiHelper, null,
+				uiBindFrom, uiBindTo, 0);
 		episodelist.setAdapter(adapter);
 	}
 

@@ -19,6 +19,7 @@ public class Item implements Serializable {
 	public static final String MEDIA_PATH = "media_path";
 	public static final String MEDIA_TYPE = "media_type";
 	public static final String FEED = "feed_id";
+	public static final String PLAYLIST_INDEX = "playlist_index";
 
 	@DatabaseField(generatedId = true, columnName = ID)
 	private int id;
@@ -46,6 +47,9 @@ public class Item implements Serializable {
 
 	@DatabaseField(columnName = MEDIA_TYPE)
 	private String mediaType;
+
+	@DatabaseField(columnName = PLAYLIST_INDEX)
+	private Integer playlistIndex;
 
 	@DatabaseField(foreign = true, foreignAutoRefresh = true, columnName = FEED)
 	private Feed feed;
@@ -128,6 +132,14 @@ public class Item implements Serializable {
 
 	public void setMediaType(final String mediaType) {
 		this.mediaType = mediaType;
+	}
+
+	public Integer getPlaylistIndex() {
+		return playlistIndex;
+	}
+
+	public void setPlaylistIndex(final Integer playlistIndex) {
+		this.playlistIndex = playlistIndex;
 	}
 
 	@Override

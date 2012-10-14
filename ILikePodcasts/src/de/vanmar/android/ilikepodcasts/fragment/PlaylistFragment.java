@@ -2,6 +2,7 @@ package de.vanmar.android.ilikepodcasts.fragment;
 
 import android.app.Activity;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
@@ -15,27 +16,26 @@ import com.googlecode.androidannotations.annotations.EFragment;
 import com.googlecode.androidannotations.annotations.ViewById;
 
 import de.vanmar.android.ilikepodcasts.R;
-import de.vanmar.android.ilikepodcasts.bo.Feed;
-import de.vanmar.android.ilikepodcasts.content.FeedContentProvider;
+import de.vanmar.android.ilikepodcasts.bo.Item;
+import de.vanmar.android.ilikepodcasts.content.EpisodeContentProvider;
 import de.vanmar.android.ilikepodcasts.util.UiHelper;
 
-@EFragment(R.layout.feeds)
-public class FeedsFragment extends Fragment implements
+@EFragment(R.layout.playlist)
+public class PlaylistFragment extends Fragment implements
 		LoaderManager.LoaderCallbacks<Cursor> {
 
-	public interface FeedsFragmentListener {
-		void onFeedSelected(Feed feed);
+	public interface PlaylistFragmentListener {
+		void onItemPlay(Item item);
 	}
 
-	private static final int FEED_LIST_LOADER = 1;
-
+	private static final int PLAYLIST_LOADER = 3;
 	@Bean
 	UiHelper uiHelper;
 
-	@ViewById(R.id.feedlist)
-	ListView feedlist;
+	@ViewById(R.id.playlist)
+	ListView playlist;
 
-	private FeedsListAdapter adapter;
+	private PlayListAdapter adapter;
 
 	@Override
 	public void onCreate(final Bundle savedInstanceState) {
@@ -44,14 +44,14 @@ public class FeedsFragment extends Fragment implements
 
 	@AfterViews
 	void afterViews() {
-		final String[] uiBindFrom = { Feed.TITLE };
+		final String[] uiBindFrom = { Item.TITLE };
 		final int[] uiBindTo = { R.id.title };
-		getLoaderManager().initLoader(FEED_LIST_LOADER, null, this);
 
-		adapter = new FeedsListAdapter(getActivity(),
-				(FeedsFragmentListener) getActivity(), uiHelper,
-				null, uiBindFrom, uiBindTo, 0);
-		feedlist.setAdapter(adapter);
+		adapter = new PlayListAdapter(getActivity(),
+				(PlaylistFragmentListener) getActivity(), uiHelper, null,
+				uiBindFrom, uiBindTo, 0);
+		playlist.setAdapter(adapter);
+		getLoaderManager().initLoader(PLAYLIST_LOADER, null, this);
 	}
 
 	@Override
@@ -67,8 +67,9 @@ public class FeedsFragment extends Fragment implements
 	@Override
 	public Loader<Cursor> onCreateLoader(final int id, final Bundle args) {
 		final CursorLoader cursorLoader = new CursorLoader(getActivity(),
-				FeedContentProvider.CONTENT_URI, FeedsListAdapter.projection,
-				null, null, null);
+				Uri.withAppendedPath(EpisodeContentProvider.CONTENT_URI,
+						"playlist"), EpisodeListAdapter.projection, null, null,
+				null);
 		return cursorLoader;
 	}
 

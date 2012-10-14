@@ -71,6 +71,7 @@ public class DatabaseManager {
 		final Dao<Feed, Integer> feedDao = getHelper().getFeedDao();
 		final QueryBuilder<Feed, Integer> queryBuilder = feedDao.queryBuilder()
 				.selectColumns(projection);
+		queryBuilder.orderBy(Feed.TITLE, false);
 		return getCursor(feedDao, queryBuilder);
 	}
 
@@ -102,6 +103,7 @@ public class DatabaseManager {
 		final Dao<Item, Integer> itemDao = getHelper().getItemDao();
 		final QueryBuilder<Item, Integer> queryBuilder = itemDao.queryBuilder()
 				.selectColumns(projection);
+		queryBuilder.orderBy(Item.PUBLISHED, false);
 		return getCursor(itemDao, queryBuilder);
 	}
 
@@ -111,6 +113,29 @@ public class DatabaseManager {
 		final QueryBuilder<Item, Integer> queryBuilder = itemDao.queryBuilder()
 				.selectColumns(projection);
 		queryBuilder.where().eq(Item.FEED, feedId);
+		queryBuilder.orderBy(Item.PUBLISHED, false);
 		return getCursor(itemDao, queryBuilder);
+	}
+
+	public Cursor getPlaylistAsCursor(final String[] projection)
+			throws SQLException {
+		final Dao<Item, Integer> itemDao = getHelper().getItemDao();
+		final QueryBuilder<Item, Integer> queryBuilder = itemDao.queryBuilder()
+				.selectColumns(projection);
+		queryBuilder.where().isNotNull(Item.PLAYLIST_INDEX);
+		queryBuilder.orderBy(Item.PLAYLIST_INDEX, true);
+		return getCursor(itemDao, queryBuilder);
+	}
+
+	public void enqueueItem(final Item item) throws SQLException {
+		final Dao<Item, Integer> itemDao = getHelper().getItemDao();
+		final String newIndex = itemDao.queryRaw(
+				"select max(playlist_index)+1 from item").getFirstResult()[0];
+		if (newIndex == null) {
+			item.setPlaylistIndex(0);
+		} else {
+			item.setPlaylistIndex(Integer.parseInt(newIndex));
+		}
+		itemDao.update(item);
 	}
 }

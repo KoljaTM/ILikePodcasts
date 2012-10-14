@@ -8,6 +8,7 @@ import android.support.v4.widget.SimpleCursorAdapter;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import de.vanmar.android.ilikepodcasts.R;
 import de.vanmar.android.ilikepodcasts.bo.Feed;
 import de.vanmar.android.ilikepodcasts.db.DatabaseManager;
 import de.vanmar.android.ilikepodcasts.fragment.FeedsFragment.FeedsFragmentListener;
@@ -24,9 +25,9 @@ public class FeedsListAdapter extends SimpleCursorAdapter {
 
 	protected FeedsListAdapter(final Activity context,
 			final FeedsFragmentListener handler, final UiHelper uiHelper,
-			final int textViewResourceId, final Cursor cursor,
-			final String[] from, final int[] to, final int flags) {
-		super(context, textViewResourceId, cursor, from, to, flags);
+			final Cursor cursor, final String[] from, final int[] to,
+			final int flags) {
+		super(context, R.layout.feeditem, cursor, from, to, flags);
 		this.handler = handler;
 		this.uiHelper = uiHelper;
 		this.dbManager = DatabaseManager.getInstance();
