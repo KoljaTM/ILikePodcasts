@@ -8,7 +8,7 @@
 
     <instrumentation
         android:name="android.test.InstrumentationTestRunner"
-        android:targetPackage="de.vanmar.android.ilikepodcasts" />
+        android:targetPackage="de.vanmar.android.ilikepodcasts.app" />
 
     <application
         android:icon="@drawable/ic_launcher"

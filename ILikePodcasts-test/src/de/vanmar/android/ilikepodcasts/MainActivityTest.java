@@ -1,8 +1,8 @@
 package de.vanmar.android.ilikepodcasts;
 
 import android.test.ActivityInstrumentationTestCase2;
-import de.vanmar.android.ilikepodcasts.MainActivity_;
-import de.vanmar.android.ilikepodcasts.R;
+import de.vanmar.android.ilikepodcasts.library.MainActivity_;
+import de.vanmar.android.ilikepodcasts.library.R;
 
 public class MainActivityTest extends
 		ActivityInstrumentationTestCase2<MainActivity_> {

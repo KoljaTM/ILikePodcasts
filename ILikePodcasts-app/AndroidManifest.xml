@@ -1,0 +1,49 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="de.vanmar.android.ilikepodcasts.app"
+    android:versionCode="1"
+    android:versionName="1.0">
+
+    <uses-sdk android:minSdkVersion="8" android:targetSdkVersion="15" />
+	<uses-permission android:name="android.permission.INTERNET" />
+	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    
+    <application android:name="de.vanmar.android.ilikepodcasts.library.ILikePodcastsApplication_"
+        android:icon="@drawable/logo"
+        android:label="@string/app_name"
+        android:theme="@style/PodcastTheme" >
+
+        <activity
+            android:name="de.vanmar.android.ilikepodcasts.library.MainActivity_"
+            android:label="@string/app_name"
+            android:configChanges="orientation|screenSize" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+      
+        <provider
+		      android:name="de.vanmar.android.ilikepodcasts.library.content.FeedContentProvider"
+		      android:authorities="de.vanmar.android.ilikepodcasts.FeedContentProvider"
+		      android:exported="false">
+        </provider>
+        
+        <provider
+		      android:name="de.vanmar.android.ilikepodcasts.library.content.EpisodeContentProvider"
+		      android:authorities="de.vanmar.android.ilikepodcasts.EpisodeContentProvider"
+		      android:exported="false">
+        </provider>
+        
+        <service
+            android:name="de.vanmar.android.ilikepodcasts.library.MediaPlayerService_" >
+        </service>
+        
+        <service
+            android:name="de.vanmar.android.ilikepodcasts.library.DownloadService_" >
+        </service>
+        
+    </application>
+
+</manifest>
