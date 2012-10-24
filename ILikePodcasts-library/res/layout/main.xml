@@ -1,21 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ViewAnimator xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/fragment_container"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content">
-
-    <fragment
-        android:id="@+id/feedsFragment"
-        android:name="de.vanmar.android.ilikepodcasts.library.fragment.FeedsFragment_"
+<LinearLayout  xmlns:android="http://schemas.android.com/apk/res/android"
+    	android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-	<fragment android:name="de.vanmar.android.ilikepodcasts.library.fragment.EpisodesFragment_"
-            android:id="@+id/episodesFragment"
-            android:layout_width="match_parent"
-    	    android:layout_height="wrap_content"/>
-	<fragment android:name="de.vanmar.android.ilikepodcasts.library.fragment.PlaylistFragment_"
-            android:id="@+id/playlistFragment"
-            android:layout_width="match_parent"
-    	    android:layout_height="wrap_content"/>
+	    android:layout_height="wrap_content">
+	
+		<fragment android:name="de.vanmar.android.ilikepodcasts.library.fragment.PlayerFragment_"
+	            android:id="@+id/playerFragment"
+	            android:layout_width="match_parent"
+	    	    android:layout_height="wrap_content"/>
     
-</ViewAnimator>
+	<ViewAnimator
+	    android:id="@+id/fragment_container"
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content">
+	
+	    <fragment
+	        android:id="@+id/feedsFragment"
+	        android:name="de.vanmar.android.ilikepodcasts.library.fragment.FeedsFragment_"
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content" />
+		<fragment android:name="de.vanmar.android.ilikepodcasts.library.fragment.EpisodesFragment_"
+	            android:id="@+id/episodesFragment"
+	            android:layout_width="match_parent"
+	    	    android:layout_height="wrap_content"/>
+		<fragment android:name="de.vanmar.android.ilikepodcasts.library.fragment.PlaylistFragment_"
+	            android:id="@+id/playlistFragment"
+	            android:layout_width="match_parent"
+	    	    android:layout_height="wrap_content"/>
+	    
+	</ViewAnimator>
+    
+</LinearLayout>
