@@ -1,8 +1,10 @@
 package de.vanmar.android.ilikepodcasts.library;
 
 import java.io.IOException;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Queue;
+import java.util.Set;
 
 import android.annotation.SuppressLint;
 import android.app.Service;
@@ -11,6 +13,7 @@ import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnCompletionListener;
 import android.net.Uri;
+import android.os.Binder;
 import android.os.IBinder;
 import android.util.Log;
 
@@ -29,6 +32,7 @@ public class MediaPlayerService extends Service {
 	UiHelper uiHelper;
 
 	public static final String EXTRA_ITEM = "de.vanmar.android.ilikepodcasts.mediaplayerservice.location";
+	private MediaPlayerServiceBinder myServiceBinder = new MediaPlayerServiceBinder();
 
 	Queue<String> pathsToPlay = new LinkedList<String>();
 
@@ -59,8 +63,32 @@ public class MediaPlayerService extends Service {
 
 	@Override
 	public IBinder onBind(final Intent intent) {
-		// We don't need to bind to this service
-		return null;
+		return myServiceBinder; // object of the class that implements Service
+								// interface.
+	}
+
+	public class MediaPlayerServiceBinder extends Binder implements
+			IMediaPlayerService {
+
+		private final Set<Callback> callbacks = new HashSet<IMediaPlayerService.Callback>();
+
+		@Override
+		public void play() {
+			Log.i("MediaPlayerService", "Play requested");
+			for (final Callback callback : callbacks) {
+				callback.playStarted();
+			}
+		}
+
+		@Override
+		public void registerCallback(final Callback callback) {
+			callbacks.add(callback);
+		}
+
+		@Override
+		public void unRegisterCallback(final Callback callback) {
+			callbacks.remove(callback);
+		}
 	}
 
 	@Override
