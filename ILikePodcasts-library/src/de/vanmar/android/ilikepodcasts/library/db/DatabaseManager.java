@@ -127,6 +127,16 @@ public class DatabaseManager {
 		return getCursor(itemDao, queryBuilder);
 	}
 
+	public Item getNextItemInPlaylist(final int afterPosition)
+			throws SQLException {
+		final QueryBuilder<Item, Integer> queryBuilder = getHelper()
+				.getItemDao().queryBuilder();
+		queryBuilder.where().gt(Item.PLAYLIST_INDEX, afterPosition);
+		queryBuilder.orderBy(Item.PLAYLIST_INDEX, true);
+
+		return queryBuilder.queryForFirst();
+	}
+
 	public void enqueueItem(final Item item) throws SQLException {
 		final Dao<Item, Integer> itemDao = getHelper().getItemDao();
 		final String newIndex = itemDao.queryRaw(

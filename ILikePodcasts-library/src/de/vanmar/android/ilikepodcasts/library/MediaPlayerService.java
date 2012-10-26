@@ -89,6 +89,15 @@ public class MediaPlayerService extends Service {
 		public void unRegisterCallback(final Callback callback) {
 			callbacks.remove(callback);
 		}
+
+		@Override
+		public void play(final Item item) {
+			Log.i("MediaPlayerService",
+					"Play requested: " + item.getDescription());
+			for (final Callback callback : callbacks) {
+				callback.playStarted();
+			}
+		}
 	}
 
 	@Override
