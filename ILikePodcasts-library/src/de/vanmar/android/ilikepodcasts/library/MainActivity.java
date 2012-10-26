@@ -30,6 +30,7 @@ import de.vanmar.android.ilikepodcasts.library.fragment.EpisodesFragment;
 import de.vanmar.android.ilikepodcasts.library.fragment.EpisodesFragment.EpisodesFragmentListener;
 import de.vanmar.android.ilikepodcasts.library.fragment.FeedsFragment;
 import de.vanmar.android.ilikepodcasts.library.fragment.FeedsFragment.FeedsFragmentListener;
+import de.vanmar.android.ilikepodcasts.library.fragment.PlayerFragment;
 import de.vanmar.android.ilikepodcasts.library.fragment.PlayerFragment.PlayerFragmentListener;
 import de.vanmar.android.ilikepodcasts.library.fragment.PlaylistFragment.PlaylistFragmentListener;
 import de.vanmar.android.ilikepodcasts.library.playlist.PlaylistManager;
@@ -62,6 +63,9 @@ public class MainActivity extends FragmentActivity implements
 
 	@FragmentById(resName = "episodesFragment")
 	protected EpisodesFragment episodesFragment;
+
+	@FragmentById(resName = "playerFragment")
+	protected PlayerFragment playerFragment;
 
 	private ServiceConnection mpServiceConnection;
 	private IMediaPlayerService mpService;
@@ -112,6 +116,11 @@ public class MainActivity extends FragmentActivity implements
 		} catch (final Exception e) {
 			uiHelper.displayError(e);
 		}
+	}
+
+	@OptionsItem(resName = "playlist")
+	protected void doPlaylist() {
+		fragmentContainer.setDisplayedChild(CHILD_PLAYLIST_FRAGMENT);
 	}
 
 	@Override
@@ -173,10 +182,27 @@ public class MainActivity extends FragmentActivity implements
 	@Override
 	public void playStarted() {
 		Log.i("MainActivity", "Play has started");
+		playerFragment.onPlayStarted();
 	}
 
 	@Override
 	public void onPlaySelected() {
 		mpService.play();
+	}
+
+	@Override
+	public void playPaused() {
+		Log.i("MainActivity", "Play was paused");
+		playerFragment.onPaused();
+	}
+
+	@Override
+	public void onPauseSelected() {
+		mpService.pause();
+	}
+
+	@Override
+	public void onSkipForward() {
+		mpService.skipForward();
 	}
 }

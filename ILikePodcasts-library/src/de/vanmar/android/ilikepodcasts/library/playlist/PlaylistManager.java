@@ -17,6 +17,10 @@ import de.vanmar.android.ilikepodcasts.library.db.DatabaseManager;
 @EBean
 public class PlaylistManager {
 
+	private static final String PLAY_POSITION = "playPosition";
+
+	private static final String PLAYED_ITEM = "playedItem";
+
 	@RootContext
 	Context context;
 
@@ -29,14 +33,15 @@ public class PlaylistManager {
 			return playPosition;
 		}
 		final Item nextItemInPlaylist = getDbManager().getNextItemInPlaylist(0);
-		return new PlayPosition(nextItemInPlaylist, 0L);
+		return new PlayPosition(nextItemInPlaylist,
+				nextItemInPlaylist.getPosition());
 	}
 
 	private PlayPosition getPlayPositionFromPrefs() throws SQLException {
 		final SharedPreferences preferences = PreferenceManager
 				.getDefaultSharedPreferences(context);
-		final int playedItemId = preferences.getInt("playedItem", 0);
-		final long position = preferences.getLong("playPosition", 0);
+		final int playedItemId = preferences.getInt(PLAYED_ITEM, 0);
+		final int position = preferences.getInt(PLAY_POSITION, 0);
 
 		if (playedItemId != 0) {
 			final Item item = getDbManager().getItem(playedItemId);
@@ -58,6 +63,10 @@ public class PlaylistManager {
 	 */
 	public void enqueueItem(final Item item) throws SQLException {
 		getDbManager().enqueueItem(item);
+		refreshItems();
+	}
+
+	private void refreshItems() {
 		context.getContentResolver()
 				.notifyChange(
 						Uri.parse(context
@@ -65,9 +74,29 @@ public class PlaylistManager {
 						null);
 	}
 
-	public void playItem(final Item item) {
-		// TODO Auto-generated method stub
-
+	public Item getNextItem(final Item item) throws SQLException {
+		final int lastPlaylistIndex = item.getPlaylistIndex();
+		final Item nextItemInPlaylist = getDbManager().getNextItemInPlaylist(
+				lastPlaylistIndex);
+		// item.setPlaylistIndex(null);
+		// getDbManager().saveItem(item);
+		refreshItems();
+		return nextItemInPlaylist;
 	}
 
+	public void setLastPlayPosition(final PlayPosition playPosition) {
+		final SharedPreferences preferences = PreferenceManager
+				.getDefaultSharedPreferences(context);
+		final SharedPreferences.Editor editor = preferences.edit();
+		editor.putInt(PLAYED_ITEM, playPosition.getItem().getId());
+		editor.putInt(PLAY_POSITION, playPosition.getPosition());
+		editor.commit();
+	}
+
+	public void savePlayPosition(final PlayPosition playPosition)
+			throws SQLException {
+		final Item item = playPosition.getItem();
+		item.setPosition(playPosition.getPosition());
+		getDbManager().saveItem(item);
+	}
 }

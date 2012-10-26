@@ -21,7 +21,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 	private static final String DATABASE_NAME = "ILikePodcasts.sqlite";
 
 	// Version history: DB:1 App Version:1
-	private static final int DATABASE_VERSION = 2;
+	private static final int DATABASE_VERSION = 1;
 
 	// the DAO object we use to access the SimpleData table
 	private Dao<Feed, Integer> feedDao = null;

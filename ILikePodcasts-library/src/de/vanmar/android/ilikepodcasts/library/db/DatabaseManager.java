@@ -142,7 +142,7 @@ public class DatabaseManager {
 		final String newIndex = itemDao.queryRaw(
 				"select max(playlist_index)+1 from item").getFirstResult()[0];
 		if (newIndex == null) {
-			item.setPlaylistIndex(0);
+			item.setPlaylistIndex(1);
 		} else {
 			item.setPlaylistIndex(Integer.parseInt(newIndex));
 		}

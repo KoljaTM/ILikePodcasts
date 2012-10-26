@@ -1,9 +1,9 @@
 package de.vanmar.android.ilikepodcasts.library;
 
-import java.io.IOException;
+import java.io.File;
+import java.io.FileInputStream;
+import java.sql.SQLException;
 import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.Queue;
 import java.util.Set;
 
 import android.annotation.SuppressLint;
@@ -12,8 +12,8 @@ import android.content.Intent;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnCompletionListener;
-import android.net.Uri;
 import android.os.Binder;
+import android.os.Environment;
 import android.os.IBinder;
 import android.util.Log;
 
@@ -22,6 +22,8 @@ import com.googlecode.androidannotations.annotations.Bean;
 import com.googlecode.androidannotations.annotations.EService;
 
 import de.vanmar.android.ilikepodcasts.library.bo.Item;
+import de.vanmar.android.ilikepodcasts.library.playlist.PlayPosition;
+import de.vanmar.android.ilikepodcasts.library.playlist.PlaylistManager;
 import de.vanmar.android.ilikepodcasts.library.util.UiHelper;
 
 @SuppressLint("Registered")
@@ -31,10 +33,11 @@ public class MediaPlayerService extends Service {
 	@Bean
 	UiHelper uiHelper;
 
+	@Bean
+	PlaylistManager playlistManager;
+
 	public static final String EXTRA_ITEM = "de.vanmar.android.ilikepodcasts.mediaplayerservice.location";
 	private MediaPlayerServiceBinder myServiceBinder = new MediaPlayerServiceBinder();
-
-	Queue<String> pathsToPlay = new LinkedList<String>();
 
 	public MediaPlayerService() {
 		super();
@@ -48,18 +51,21 @@ public class MediaPlayerService extends Service {
 		public void onCompletion(final MediaPlayer mp) {
 			mp.release();
 			mediaPlayer = null;
-			if (pathsToPlay.isEmpty()) {
-				stopSelf();
-			} else {
-				try {
-					playPath(pathsToPlay.poll());
-				} catch (final Exception e) {
-					cleanup();
-					uiHelper.displayError(e);
+			try {
+				playing = playlistManager.getNextItem(playing);
+				if (playing == null) {
+					stopSelf();
+				} else {
+					playItem(new PlayPosition(playing, playing.getPosition()));
 				}
+			} catch (final SQLException e) {
+				cleanup();
+				uiHelper.displayError(e);
 			}
 		}
 	};
+
+	public Item playing;
 
 	@Override
 	public IBinder onBind(final Intent intent) {
@@ -67,18 +73,16 @@ public class MediaPlayerService extends Service {
 								// interface.
 	}
 
+	@Override
+	public void onDestroy() {
+		cleanup();
+		super.onDestroy();
+	}
+
 	public class MediaPlayerServiceBinder extends Binder implements
 			IMediaPlayerService {
 
 		private final Set<Callback> callbacks = new HashSet<IMediaPlayerService.Callback>();
-
-		@Override
-		public void play() {
-			Log.i("MediaPlayerService", "Play requested");
-			for (final Callback callback : callbacks) {
-				callback.playStarted();
-			}
-		}
 
 		@Override
 		public void registerCallback(final Callback callback) {
@@ -91,61 +95,106 @@ public class MediaPlayerService extends Service {
 		}
 
 		@Override
+		public void play() {
+			try {
+				if (mediaPlayer != null) {
+					mediaPlayer.start();
+				} else {
+					PlayPosition playPosition;
+					playPosition = playlistManager.getPlayPosition();
+					Log.i("MediaPlayerService",
+							"Play requested: "
+									+ playPosition.getItem().getTitle()
+									+ playPosition.getPosition());
+					playItem(playPosition);
+				}
+				for (final Callback callback : callbacks) {
+					callback.playStarted();
+				}
+			} catch (final SQLException e) {
+				uiHelper.displayError(e);
+			}
+		}
+
+		@Override
 		public void play(final Item item) {
-			Log.i("MediaPlayerService",
-					"Play requested: " + item.getDescription());
+			Log.i("MediaPlayerService", "Play requested: " + item.getTitle());
+			playItem(new PlayPosition(item, item.getPosition()));
 			for (final Callback callback : callbacks) {
 				callback.playStarted();
 			}
 		}
-	}
 
-	@Override
-	public int onStartCommand(final Intent intent, final int flags,
-			final int startId) {
-		onHandleIntent(intent);
-		return START_STICKY;
-	}
-
-	protected void onHandleIntent(final Intent intent) {
-		if (intent == null) {
-			if (mediaPlayer == null) {
-				stopSelf();
+		@Override
+		public void pause() {
+			Log.i("MediaPlayerService", "Pause requested");
+			pausePlayback();
+			for (final Callback callback : callbacks) {
+				callback.playPaused();
 			}
-			return;
 		}
-		final Object extra = intent.getExtras().get(EXTRA_ITEM);
-		if (!(extra instanceof Item)) {
-			return;
-		}
-		final Item item = (Item) extra;
-		enqueueItemForPlay(item);
-	}
 
-	@Background
-	void enqueueItemForPlay(final Item item) {
-		pathsToPlay.add(item.getMediaUrl());
-		synchronized (pathsToPlay) {
-			if (mediaPlayer == null && !pathsToPlay.isEmpty()) {
-				final String path = pathsToPlay.poll();
-				playPath(path);
+		@Override
+		public void skipForward() {
+			savePositionInCurrentItem();
+			Item nextItem;
+			try {
+				nextItem = playlistManager.getNextItem(playing);
+				if (nextItem != null) {
+					playItem(new PlayPosition(nextItem, nextItem.getPosition()));
+				}
+			} catch (final SQLException e) {
+				uiHelper.displayError(e);
 			}
 		}
 	}
 
-	private void playPath(final String path) {
+	private void playItem(final PlayPosition playPosition) {
+		savePositionInCurrentItem();
+		playing = playPosition.getItem();
 		mediaPlayer = new MediaPlayer();
 		Log.w("MediaPlayerService", "playPath; mediaplayer=" + mediaPlayer);
 		mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
 		try {
-			setDataSourceForPath(mediaPlayer, path);
+			final File SDCardRoot = Environment.getExternalStorageDirectory();
+			final File file = new File(SDCardRoot, playing.getMediaPath());
+			final FileInputStream inputStream = new FileInputStream(file);
+			mediaPlayer.setDataSource(inputStream.getFD());
 			mediaPlayer.setOnCompletionListener(onCompletionListener);
 			mediaPlayer.prepare();
 			Log.w("MediaPlayerService", "starting");
+			mediaPlayer.seekTo(playPosition.getPosition());
 			mediaPlayer.start();
 		} catch (final Exception e) {
 			cleanup();
 			uiHelper.displayError(e);
+		}
+	}
+
+	public void pausePlayback() {
+		if (mediaPlayer != null && mediaPlayer.isPlaying()) {
+			mediaPlayer.pause();
+			savePlayPosition();
+		}
+
+	}
+
+	private void savePlayPosition() {
+		if (mediaPlayer != null && playing != null) {
+			playlistManager.setLastPlayPosition(new PlayPosition(playing,
+					mediaPlayer.getCurrentPosition()));
+		}
+	}
+
+	@Background
+	void savePositionInCurrentItem() {
+		if (mediaPlayer != null && playing != null) {
+			try {
+				playlistManager.savePlayPosition(new PlayPosition(playing,
+						mediaPlayer.getCurrentPosition()));
+			} catch (final SQLException e) {
+				uiHelper.displayError(e);
+			}
 		}
 	}
 
@@ -155,10 +204,5 @@ public class MediaPlayerService extends Service {
 			mediaPlayer = null;
 			stopSelf();
 		}
-	}
-
-	private void setDataSourceForPath(final MediaPlayer mp, final String path)
-			throws IOException {
-		mp.setDataSource(this, Uri.parse(path));
 	}
 }

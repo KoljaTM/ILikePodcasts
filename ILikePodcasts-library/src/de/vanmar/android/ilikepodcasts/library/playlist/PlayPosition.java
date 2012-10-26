@@ -4,7 +4,7 @@ import de.vanmar.android.ilikepodcasts.library.bo.Item;
 
 public class PlayPosition {
 
-	public PlayPosition(final Item item, final Long position) {
+	public PlayPosition(final Item item, final int position) {
 		super();
 		this.item = item;
 		this.position = position;
@@ -12,7 +12,7 @@ public class PlayPosition {
 
 	private Item item;
 
-	private Long position;
+	private int position;
 
 	public Item getItem() {
 		return item;
@@ -22,11 +22,11 @@ public class PlayPosition {
 		this.item = item;
 	}
 
-	public Long getPosition() {
+	public int getPosition() {
 		return position;
 	}
 
-	public void setPosition(final Long position) {
+	public void setPosition(final int position) {
 		this.position = position;
 	}
 

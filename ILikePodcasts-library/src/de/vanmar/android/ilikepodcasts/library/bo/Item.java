@@ -20,6 +20,7 @@ public class Item implements Serializable {
 	public static final String MEDIA_TYPE = "media_type";
 	public static final String FEED = "feed_id";
 	public static final String PLAYLIST_INDEX = "playlist_index";
+	public static final String POSITION = "position";
 
 	@DatabaseField(generatedId = true, columnName = ID)
 	private int id;
@@ -50,6 +51,9 @@ public class Item implements Serializable {
 
 	@DatabaseField(columnName = PLAYLIST_INDEX)
 	private Integer playlistIndex;
+
+	@DatabaseField(columnName = POSITION)
+	private int position;
 
 	@DatabaseField(foreign = true, foreignAutoRefresh = true, columnName = FEED)
 	private Feed feed;
@@ -140,6 +144,14 @@ public class Item implements Serializable {
 
 	public void setPlaylistIndex(final Integer playlistIndex) {
 		this.playlistIndex = playlistIndex;
+	}
+
+	public int getPosition() {
+		return position;
+	}
+
+	public void setPosition(final int position) {
+		this.position = position;
 	}
 
 	@Override
