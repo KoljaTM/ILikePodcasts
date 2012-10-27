@@ -4,11 +4,17 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.SeekBar;
+import android.widget.SeekBar.OnSeekBarChangeListener;
+import android.widget.TextView;
 
 import com.googlecode.androidannotations.annotations.AfterViews;
 import com.googlecode.androidannotations.annotations.Click;
 import com.googlecode.androidannotations.annotations.EFragment;
+import com.googlecode.androidannotations.annotations.UiThread;
 import com.googlecode.androidannotations.annotations.ViewById;
+
+import de.vanmar.android.ilikepodcasts.library.bo.Item;
 
 @EFragment(resName = "player")
 public class PlayerFragment extends Fragment {
@@ -20,12 +26,27 @@ public class PlayerFragment extends Fragment {
 	@ViewById(resName = "pauseButton")
 	ImageButton pauseButton;
 
+	@ViewById(resName = "title")
+	TextView title;
+
+	@ViewById(resName = "position")
+	SeekBar position;
+
+	private boolean playing = false;
+	private int totalDuration = 0;
+
 	public interface PlayerFragmentListener {
 		void onPlaySelected();
 
 		void onPauseSelected();
 
 		void onSkipForward();
+
+		void onSkipBack();
+
+		int getPlaybackPosition();
+
+		void onSeek(int progress);
 	}
 
 	@Override
@@ -41,6 +62,24 @@ public class PlayerFragment extends Fragment {
 	@AfterViews
 	void afterViews() {
 		listener = (PlayerFragmentListener) getActivity();
+		position.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
+
+			@Override
+			public void onStopTrackingTouch(final SeekBar seekBar) {
+				listener.onSeek(seekBar.getProgress());
+			}
+
+			@Override
+			public void onStartTrackingTouch(final SeekBar seekBar) {
+				listener.onPauseSelected();
+			}
+
+			@Override
+			public void onProgressChanged(final SeekBar seekBar,
+					final int progress, final boolean fromUser) {
+			}
+		});
+		initProgress(totalDuration);
 	}
 
 	@Click(resName = "playButton")
@@ -48,9 +87,28 @@ public class PlayerFragment extends Fragment {
 		listener.onPlaySelected();
 	}
 
-	public void onPlayStarted() {
+	public void onPlayStarted(final Item item, final int totalDuration) {
 		playButton.setVisibility(View.GONE);
 		pauseButton.setVisibility(View.VISIBLE);
+		title.setText(item.getTitle());
+		this.playing = true;
+		this.totalDuration = totalDuration;
+		initProgress(totalDuration);
+		getProgress();
+	}
+
+	private void initProgress(final int totalDuration) {
+		this.position.setEnabled(totalDuration != 0);
+		this.position.setMax(totalDuration);
+	}
+
+	@UiThread(delay = 50)
+	void getProgress() {
+		final int progress = listener.getPlaybackPosition();
+		this.position.setProgress(progress);
+		if (playing) {
+			getProgress();
+		}
 	}
 
 	@Click(resName = "pauseButton")
@@ -58,13 +116,19 @@ public class PlayerFragment extends Fragment {
 		listener.onPauseSelected();
 	}
 
+	@Click(resName = "previousButton")
+	void onPreviousButtonClicked() {
+		listener.onSkipBack();
+	}
+
 	@Click(resName = "nextButton")
-	void onNxtButtonClicked() {
+	void onNextButtonClicked() {
 		listener.onSkipForward();
 	}
 
 	public void onPaused() {
 		playButton.setVisibility(View.VISIBLE);
 		pauseButton.setVisibility(View.GONE);
+		this.playing = false;
 	}
 }

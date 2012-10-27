@@ -21,6 +21,7 @@ import com.googlecode.androidannotations.annotations.Background;
 import com.googlecode.androidannotations.annotations.Bean;
 import com.googlecode.androidannotations.annotations.EService;
 
+import de.vanmar.android.ilikepodcasts.library.IMediaPlayerService.Callback;
 import de.vanmar.android.ilikepodcasts.library.bo.Item;
 import de.vanmar.android.ilikepodcasts.library.playlist.PlayPosition;
 import de.vanmar.android.ilikepodcasts.library.playlist.PlaylistManager;
@@ -98,7 +99,7 @@ public class MediaPlayerService extends Service {
 		public void play() {
 			try {
 				if (mediaPlayer != null) {
-					mediaPlayer.start();
+					startPlay();
 				} else {
 					PlayPosition playPosition;
 					playPosition = playlistManager.getPlayPosition();
@@ -107,9 +108,6 @@ public class MediaPlayerService extends Service {
 									+ playPosition.getItem().getTitle()
 									+ playPosition.getPosition());
 					playItem(playPosition);
-				}
-				for (final Callback callback : callbacks) {
-					callback.playStarted();
 				}
 			} catch (final SQLException e) {
 				uiHelper.displayError(e);
@@ -120,9 +118,6 @@ public class MediaPlayerService extends Service {
 		public void play(final Item item) {
 			Log.i("MediaPlayerService", "Play requested: " + item.getTitle());
 			playItem(new PlayPosition(item, item.getPosition()));
-			for (final Callback callback : callbacks) {
-				callback.playStarted();
-			}
 		}
 
 		@Override
@@ -131,6 +126,20 @@ public class MediaPlayerService extends Service {
 			pausePlayback();
 			for (final Callback callback : callbacks) {
 				callback.playPaused();
+			}
+		}
+
+		@Override
+		public void skipBack() {
+			savePositionInCurrentItem();
+			Item prevItem;
+			try {
+				prevItem = playlistManager.getPreviousItem(playing);
+				if (prevItem != null) {
+					playItem(new PlayPosition(prevItem, prevItem.getPosition()));
+				}
+			} catch (final SQLException e) {
+				uiHelper.displayError(e);
 			}
 		}
 
@@ -147,12 +156,29 @@ public class MediaPlayerService extends Service {
 				uiHelper.displayError(e);
 			}
 		}
+
+		@Override
+		public int getPlaybackPosition() {
+			if (mediaPlayer == null) {
+				return 0;
+			} else {
+				return mediaPlayer.getCurrentPosition();
+			}
+		}
+
+		@Override
+		public void seekToPosition(final int position) {
+			if (mediaPlayer != null) {
+				mediaPlayer.seekTo(position);
+				startPlay();
+			}
+		}
 	}
 
 	private void playItem(final PlayPosition playPosition) {
 		savePositionInCurrentItem();
 		playing = playPosition.getItem();
-		mediaPlayer = new MediaPlayer();
+		mediaPlayer = getMediaPlayer();
 		Log.w("MediaPlayerService", "playPath; mediaplayer=" + mediaPlayer);
 		mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
 		try {
@@ -160,15 +186,30 @@ public class MediaPlayerService extends Service {
 			final File file = new File(SDCardRoot, playing.getMediaPath());
 			final FileInputStream inputStream = new FileInputStream(file);
 			mediaPlayer.setDataSource(inputStream.getFD());
-			mediaPlayer.setOnCompletionListener(onCompletionListener);
 			mediaPlayer.prepare();
 			Log.w("MediaPlayerService", "starting");
 			mediaPlayer.seekTo(playPosition.getPosition());
-			mediaPlayer.start();
+			startPlay();
 		} catch (final Exception e) {
 			cleanup();
 			uiHelper.displayError(e);
 		}
+	}
+
+	private void startPlay() {
+		mediaPlayer.start();
+		for (final Callback callback : myServiceBinder.callbacks) {
+			callback.playStarted(playing, mediaPlayer.getDuration());
+		}
+	}
+
+	private MediaPlayer getMediaPlayer() {
+		if (mediaPlayer != null) {
+			mediaPlayer.release();
+		}
+		mediaPlayer = new MediaPlayer();
+		mediaPlayer.setOnCompletionListener(onCompletionListener);
+		return mediaPlayer;
 	}
 
 	public void pausePlayback() {

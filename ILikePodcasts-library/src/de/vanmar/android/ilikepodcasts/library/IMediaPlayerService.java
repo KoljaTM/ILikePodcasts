@@ -5,7 +5,7 @@ import de.vanmar.android.ilikepodcasts.library.bo.Item;
 public interface IMediaPlayerService {
 
 	public interface Callback {
-		void playStarted();
+		void playStarted(Item item, int totalDuration);
 
 		void playPaused();
 	}
@@ -21,5 +21,11 @@ public interface IMediaPlayerService {
 	void pause();
 
 	void skipForward();
+
+	void skipBack();
+
+	int getPlaybackPosition();
+
+	void seekToPosition(int position);
 
 }

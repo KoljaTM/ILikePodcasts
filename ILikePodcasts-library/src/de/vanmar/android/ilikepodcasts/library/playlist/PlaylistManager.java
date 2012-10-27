@@ -74,13 +74,17 @@ public class PlaylistManager {
 						null);
 	}
 
+	public Item getPreviousItem(final Item item) throws SQLException {
+		final int lastPlaylistIndex = item.getPlaylistIndex();
+		final Item previousItemInPlaylist = getDbManager()
+				.getPreviousItemInPlaylist(lastPlaylistIndex);
+		return previousItemInPlaylist;
+	}
+
 	public Item getNextItem(final Item item) throws SQLException {
 		final int lastPlaylistIndex = item.getPlaylistIndex();
 		final Item nextItemInPlaylist = getDbManager().getNextItemInPlaylist(
 				lastPlaylistIndex);
-		// item.setPlaylistIndex(null);
-		// getDbManager().saveItem(item);
-		refreshItems();
 		return nextItemInPlaylist;
 	}
 

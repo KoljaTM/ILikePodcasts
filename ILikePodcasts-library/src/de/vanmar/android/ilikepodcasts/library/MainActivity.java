@@ -180,9 +180,9 @@ public class MainActivity extends FragmentActivity implements
 	}
 
 	@Override
-	public void playStarted() {
+	public void playStarted(final Item item, final int totalDuration) {
 		Log.i("MainActivity", "Play has started");
-		playerFragment.onPlayStarted();
+		playerFragment.onPlayStarted(item, totalDuration);
 	}
 
 	@Override
@@ -202,7 +202,23 @@ public class MainActivity extends FragmentActivity implements
 	}
 
 	@Override
+	public void onSkipBack() {
+		mpService.skipBack();
+	}
+
+	@Override
 	public void onSkipForward() {
 		mpService.skipForward();
 	}
+
+	@Override
+	public int getPlaybackPosition() {
+		return mpService.getPlaybackPosition();
+	}
+
+	@Override
+	public void onSeek(final int progress) {
+		mpService.seekToPosition(progress);
+	}
+
 }
