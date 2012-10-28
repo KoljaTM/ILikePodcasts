@@ -28,4 +28,8 @@ public interface IMediaPlayerService {
 
 	void seekToPosition(int position);
 
+	int getTotalDuration();
+
+	PlayerStatus getPlayerStatus();
+
 }

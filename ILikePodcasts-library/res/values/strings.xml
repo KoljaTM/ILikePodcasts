@@ -10,4 +10,7 @@
     <string name="next">Weiter</string>
 
     <string name="position">%s</string>
+    <string name="nowPlayingTitle">ILikePodcasts</string>
+    <string name="nowPlayingNotificationTitle">ILikePodcasts Wiedergabe</string>
+    <string name="nowPlayingNotificationText">%s</string>
 </resources>

@@ -14,6 +14,8 @@ import com.googlecode.androidannotations.annotations.EFragment;
 import com.googlecode.androidannotations.annotations.UiThread;
 import com.googlecode.androidannotations.annotations.ViewById;
 
+import de.vanmar.android.ilikepodcasts.library.PlayerStatus;
+import de.vanmar.android.ilikepodcasts.library.PlayerStatus.PlayerState;
 import de.vanmar.android.ilikepodcasts.library.bo.Item;
 
 @EFragment(resName = "player")
@@ -47,6 +49,8 @@ public class PlayerFragment extends Fragment {
 		int getPlaybackPosition();
 
 		void onSeek(int progress);
+
+		int getTotalDuration();
 	}
 
 	@Override
@@ -130,5 +134,14 @@ public class PlayerFragment extends Fragment {
 		playButton.setVisibility(View.VISIBLE);
 		pauseButton.setVisibility(View.GONE);
 		this.playing = false;
+	}
+
+	public void setPlayerStatus(final PlayerStatus playerStatus) {
+		if (playerStatus.getState() == PlayerState.STARTED) {
+			onPlayStarted(playerStatus.getItem(),
+					playerStatus.getTotalDuration());
+		} else {
+			onPaused();
+		}
 	}
 }

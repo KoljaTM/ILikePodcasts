@@ -81,10 +81,16 @@ public class PlaylistManager {
 		return previousItemInPlaylist;
 	}
 
-	public Item getNextItem(final Item item) throws SQLException {
+	public Item getNextItem(final Item item, final boolean removeFromPlaylist)
+			throws SQLException {
 		final int lastPlaylistIndex = item.getPlaylistIndex();
 		final Item nextItemInPlaylist = getDbManager().getNextItemInPlaylist(
 				lastPlaylistIndex);
+		if (removeFromPlaylist) {
+			item.setPlaylistIndex(null);
+			getDbManager().saveItem(item);
+		}
+
 		return nextItemInPlaylist;
 	}
 

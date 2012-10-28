@@ -89,6 +89,7 @@ public class MainActivity extends FragmentActivity implements
 					final IBinder service) {
 				mpService = (IMediaPlayerService) service;
 				mpService.registerCallback(MainActivity.this);
+				playerFragment.setPlayerStatus(mpService.getPlayerStatus());
 				Log.i("INFO", "Service bound ");
 			}
 		};
@@ -219,6 +220,11 @@ public class MainActivity extends FragmentActivity implements
 	@Override
 	public void onSeek(final int progress) {
 		mpService.seekToPosition(progress);
+	}
+
+	@Override
+	public int getTotalDuration() {
+		return mpService.getTotalDuration();
 	}
 
 }
