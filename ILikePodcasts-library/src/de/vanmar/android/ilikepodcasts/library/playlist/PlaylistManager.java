@@ -26,18 +26,16 @@ public class PlaylistManager {
 
 	private DatabaseManager dbManager;
 
-	public PlayPosition getPlayPosition() throws SQLException {
-		final PlayPosition playPosition = getPlayPositionFromPrefs();
+	public Item getPlayPosition() throws SQLException {
+		final Item playing = getPlayPositionFromPrefs();
 
-		if (playPosition != null) {
-			return playPosition;
+		if (playing != null) {
+			return playing;
 		}
-		final Item nextItemInPlaylist = getDbManager().getNextItemInPlaylist(0);
-		return new PlayPosition(nextItemInPlaylist,
-				nextItemInPlaylist.getPosition());
+		return getDbManager().getNextItemInPlaylist(0);
 	}
 
-	private PlayPosition getPlayPositionFromPrefs() throws SQLException {
+	private Item getPlayPositionFromPrefs() throws SQLException {
 		final SharedPreferences preferences = PreferenceManager
 				.getDefaultSharedPreferences(context);
 		final int playedItemId = preferences.getInt(PLAYED_ITEM, 0);
@@ -45,7 +43,8 @@ public class PlaylistManager {
 
 		if (playedItemId != 0) {
 			final Item item = getDbManager().getItem(playedItemId);
-			return new PlayPosition(item, position);
+			item.setPosition(position);
+			return item;
 		}
 		return null;
 	}
@@ -95,19 +94,18 @@ public class PlaylistManager {
 		return nextItemInPlaylist;
 	}
 
-	public void setLastPlayPosition(final PlayPosition playPosition) {
+	public void setLastPlayPosition(final Item item, final int position) {
 		final SharedPreferences preferences = PreferenceManager
 				.getDefaultSharedPreferences(context);
 		final SharedPreferences.Editor editor = preferences.edit();
-		editor.putInt(PLAYED_ITEM, playPosition.getItem().getId());
-		editor.putInt(PLAY_POSITION, playPosition.getPosition());
+		editor.putInt(PLAYED_ITEM, item.getId());
+		editor.putInt(PLAY_POSITION, position);
 		editor.commit();
 	}
 
-	public void savePlayPosition(final PlayPosition playPosition)
+	public void savePlayPosition(final Item item, final int position)
 			throws SQLException {
-		final Item item = playPosition.getItem();
-		item.setPosition(playPosition.getPosition());
+		item.setPosition(position);
 		getDbManager().saveItem(item);
 	}
 }

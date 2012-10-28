@@ -27,7 +27,6 @@ import com.googlecode.androidannotations.annotations.EService;
 import de.vanmar.android.ilikepodcasts.library.IMediaPlayerService.Callback;
 import de.vanmar.android.ilikepodcasts.library.PlayerStatus.PlayerState;
 import de.vanmar.android.ilikepodcasts.library.bo.Item;
-import de.vanmar.android.ilikepodcasts.library.playlist.PlayPosition;
 import de.vanmar.android.ilikepodcasts.library.playlist.PlaylistManager;
 import de.vanmar.android.ilikepodcasts.library.util.UiHelper;
 
@@ -64,7 +63,7 @@ public class MediaPlayerService extends Service {
 					stopForeground();
 					stopSelf();
 				} else {
-					playItem(new PlayPosition(playing, playing.getPosition()));
+					playItem(playing);
 				}
 			} catch (final SQLException e) {
 				cleanup();
@@ -127,11 +126,9 @@ public class MediaPlayerService extends Service {
 				if (mediaPlayer != null) {
 					startPlay();
 				} else {
-					PlayPosition playPosition;
-					playPosition = playlistManager.getPlayPosition();
+					final Item playPosition = playlistManager.getPlayPosition();
 					Log.i("MediaPlayerService",
-							"Play requested: "
-									+ playPosition.getItem().getTitle()
+							"Play requested: " + playPosition.getTitle()
 									+ playPosition.getPosition());
 					playItem(playPosition);
 				}
@@ -143,7 +140,7 @@ public class MediaPlayerService extends Service {
 		@Override
 		public void play(final Item item) {
 			Log.i("MediaPlayerService", "Play requested: " + item.getTitle());
-			playItem(new PlayPosition(item, item.getPosition()));
+			playItem(item);
 		}
 
 		@Override
@@ -162,7 +159,7 @@ public class MediaPlayerService extends Service {
 			try {
 				prevItem = playlistManager.getPreviousItem(playing);
 				if (prevItem != null) {
-					playItem(new PlayPosition(prevItem, prevItem.getPosition()));
+					playItem(prevItem);
 				}
 			} catch (final SQLException e) {
 				uiHelper.displayError(e);
@@ -176,7 +173,7 @@ public class MediaPlayerService extends Service {
 			try {
 				nextItem = playlistManager.getNextItem(playing, false);
 				if (nextItem != null) {
-					playItem(new PlayPosition(nextItem, nextItem.getPosition()));
+					playItem(nextItem);
 				}
 			} catch (final SQLException e) {
 				uiHelper.displayError(e);
@@ -224,9 +221,9 @@ public class MediaPlayerService extends Service {
 		}
 	}
 
-	private void playItem(final PlayPosition playPosition) {
+	private void playItem(final Item item) {
 		savePositionInCurrentItem();
-		playing = playPosition.getItem();
+		playing = item;
 		mediaPlayer = getMediaPlayer();
 		Log.w("MediaPlayerService", "playPath; mediaplayer=" + mediaPlayer);
 		mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
@@ -237,7 +234,7 @@ public class MediaPlayerService extends Service {
 			mediaPlayer.setDataSource(inputStream.getFD());
 			mediaPlayer.prepare();
 			Log.w("MediaPlayerService", "starting");
-			mediaPlayer.seekTo(playPosition.getPosition());
+			mediaPlayer.seekTo(item.getPosition());
 			startPlay();
 		} catch (final Exception e) {
 			cleanup();
@@ -273,8 +270,8 @@ public class MediaPlayerService extends Service {
 
 	private void savePlayPosition() {
 		if (mediaPlayer != null && playing != null) {
-			playlistManager.setLastPlayPosition(new PlayPosition(playing,
-					mediaPlayer.getCurrentPosition()));
+			playlistManager.setLastPlayPosition(playing,
+					mediaPlayer.getCurrentPosition());
 		}
 	}
 
@@ -282,8 +279,8 @@ public class MediaPlayerService extends Service {
 	void savePositionInCurrentItem() {
 		if (mediaPlayer != null && playing != null) {
 			try {
-				playlistManager.savePlayPosition(new PlayPosition(playing,
-						mediaPlayer.getCurrentPosition()));
+				playlistManager.savePlayPosition(playing,
+						mediaPlayer.getCurrentPosition());
 			} catch (final SQLException e) {
 				uiHelper.displayError(e);
 			}
