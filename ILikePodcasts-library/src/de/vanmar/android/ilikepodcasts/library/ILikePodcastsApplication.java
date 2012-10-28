@@ -6,5 +6,6 @@ import com.googlecode.androidannotations.annotations.EApplication;
 
 @EApplication
 public class ILikePodcastsApplication extends Application {
+	public static final String FILE_DIR = "ILikePodcasts";
 
 }

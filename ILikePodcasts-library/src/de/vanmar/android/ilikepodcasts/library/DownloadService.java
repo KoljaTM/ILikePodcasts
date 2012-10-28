@@ -27,7 +27,7 @@ public class DownloadService extends IntentService {
 
 	public static final int UPDATE_PROGRESS = 8344;
 
-	private static final String FILE_PREFIX = "ILikePodcasts/Podcast_";
+	private static final String FILE_PREFIX = "Podcast_";
 
 	public static final String EXTRA_ITEM = "de.vanmar.android.ilikepodcasts.downloadservice.item";
 
@@ -59,11 +59,12 @@ public class DownloadService extends IntentService {
 			final File SDCardRoot = Environment.getExternalStorageDirectory();
 			// create a new file, specifying the path, and the filename
 			// which we want to save the file as.
-			new File(SDCardRoot, "ILikePodcasts").mkdir();
+			new File(SDCardRoot, ILikePodcastsApplication.FILE_DIR).mkdir();
 
 			// download the file
 			input = new BufferedInputStream(url.openStream());
-			final String filename = FILE_PREFIX
+			final String filename = ILikePodcastsApplication.FILE_DIR
+					+ File.separator + FILE_PREFIX
 					+ itemToDownload.getMediaUrl().hashCode() + ".mp3";
 			output = new FileOutputStream(new File(SDCardRoot, filename));
 
