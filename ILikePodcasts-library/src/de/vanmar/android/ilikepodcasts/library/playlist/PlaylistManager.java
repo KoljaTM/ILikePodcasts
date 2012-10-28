@@ -89,6 +89,7 @@ public class PlaylistManager {
 		if (removeFromPlaylist) {
 			item.setPlaylistIndex(null);
 			getDbManager().saveItem(item);
+			refreshItems();
 		}
 
 		return nextItemInPlaylist;
