@@ -34,6 +34,7 @@ import de.vanmar.android.ilikepodcasts.library.fragment.PlayerFragment;
 import de.vanmar.android.ilikepodcasts.library.fragment.PlayerFragment.PlayerFragmentListener;
 import de.vanmar.android.ilikepodcasts.library.fragment.PlaylistFragment.PlaylistFragmentListener;
 import de.vanmar.android.ilikepodcasts.library.playlist.PlaylistManager;
+import de.vanmar.android.ilikepodcasts.library.search.SearchActivity_;
 import de.vanmar.android.ilikepodcasts.library.util.UiHelper;
 
 @EActivity(resName = "main")
@@ -122,6 +123,11 @@ public class MainActivity extends FragmentActivity implements
 	@OptionsItem(resName = "playlist")
 	protected void doPlaylist() {
 		fragmentContainer.setDisplayedChild(CHILD_PLAYLIST_FRAGMENT);
+	}
+
+	@OptionsItem(resName = "search")
+	protected void doSearch() {
+		this.startActivity(new Intent(this, SearchActivity_.class));
 	}
 
 	@Override

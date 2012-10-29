@@ -3,6 +3,7 @@
     <string name="episodeContentProviderUri">content://de.vanmar.android.ilikepodcasts.EpisodeContentProvider/episodes</string>
     <string name="app_name">ILikePodcasts-App</string>
     <string name="refresh">Aktualisieren</string>
+    <string name="networkNotAvailable">Internet nicht verfügbar</string>
 
     <string name="previous">Zurück</string>
     <string name="play">Play</string>
@@ -13,4 +14,10 @@
     <string name="nowPlayingTitle">ILikePodcasts</string>
     <string name="nowPlayingNotificationTitle">ILikePodcasts Wiedergabe</string>
     <string name="nowPlayingNotificationText">%s</string>
+
+    <string name="searchHint">Suchbegriff</string>
+    <string name="searchButton">Suche</string>
+    <string name="searchButtonWaiting">Suche…</string>
+
+    <string name="imageDesc">Bild</string>
 </resources>

@@ -9,4 +9,9 @@
           android:icon="@drawable/play"
           android:title="@string/refresh"
           android:showAsAction="ifRoom"/>
+
+    <item android:id="@+id/search"
+          android:icon="@drawable/next"
+          android:title="@string/refresh"
+          android:showAsAction="ifRoom"/>
 </menu>

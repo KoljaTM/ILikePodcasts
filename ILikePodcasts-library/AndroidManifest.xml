@@ -24,6 +24,11 @@
             </intent-filter>
         </activity>
       
+        <activity
+            android:name="de.vanmar.android.ilikepodcasts.library.search.SearchActivity_"
+            android:configChanges="orientation|screenSize" >
+        </activity>
+      
         <provider
 		      android:name=".content.AbstractFeedContentProvider"
 		      android:authorities="de.vanmar.android.ilikepodcasts.FeedContentProvider"
