@@ -74,7 +74,12 @@ public class PlaylistManager {
 	}
 
 	public Item getPreviousItem(final Item item) throws SQLException {
-		final int lastPlaylistIndex = item.getPlaylistIndex();
+		final int lastPlaylistIndex;
+		if (item == null) {
+			lastPlaylistIndex = Integer.MAX_VALUE;
+		} else {
+			lastPlaylistIndex = item.getPlaylistIndex();
+		}
 		final Item previousItemInPlaylist = getDbManager()
 				.getPreviousItemInPlaylist(lastPlaylistIndex);
 		return previousItemInPlaylist;

@@ -1,18 +1,19 @@
 package de.vanmar.android.ilikepodcasts.library.search;
 
+import java.io.InputStream;
+import java.net.URL;
 import java.util.Collections;
 import java.util.List;
 
+import android.graphics.drawable.Drawable;
 import android.support.v4.app.FragmentActivity;
+import android.util.Log;
 import android.view.KeyEvent;
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
@@ -55,8 +56,6 @@ public class SearchActivity extends FragmentActivity {
 	@Bean
 	SearchHelper searchHelper;
 
-	private ArrayAdapter<SearchResultItem> searchResultAdapter;
-
 	@AfterViews
 	void setupListeners() {
 		searchBox.setOnEditorActionListener(new OnEditorActionListener() {
@@ -74,33 +73,6 @@ public class SearchActivity extends FragmentActivity {
 				return true;
 			}
 		});
-	}
-
-	@AfterViews
-	void setupListAdapter() {
-		searchResultAdapter = new ArrayAdapter<SearchResultItem>(this,
-				R.layout.searchresultlist_item) {
-			@Override
-			public View getView(final int position, final View convertView,
-					final ViewGroup parent) {
-				final View view = getLayoutInflater().inflate(
-						R.layout.searchresultlist_item, null);
-				final SearchResultItem item = getItem(position);
-				((TextView) view.findViewById(R.id.title)).setText(item
-						.getCollectionName());
-
-				view.setOnClickListener(new OnClickListener() {
-
-					@Override
-					public void onClick(final View v) {
-					}
-				});
-
-				return view;
-			}
-
-		};
-		searchResults.setAdapter(searchResultAdapter);
 	}
 
 	@Click(resName = "searchButton")
@@ -137,10 +109,46 @@ public class SearchActivity extends FragmentActivity {
 	}
 
 	@UiThread
-	void displaySearchResults(final List<SearchResultItem> searchResults) {
-		searchResultAdapter.clear();
-		for (final SearchResultItem feed : searchResults) {
-			searchResultAdapter.add(feed);
+	void displaySearchResults(final List<SearchResultItem> searchResultList) {
+		searchResults.setAdapter(new SearchListAdapter(this, searchResultList));
+	}
+
+	@Background
+	void setImage(final ImageView imageView, final SearchResultItem item) {
+		Drawable drawable = null;
+		imageView.setTag(item);
+		imageView.setImageDrawable(null);
+		if (item.getImage() != null) {
+			// Drawable already loaded
+			drawable = item.getImage();
+			Log.i("Image already found",
+					imageView.toString() + item.getCollectionName());
+		} else if (item.getArtworkUrl60() != null) {
+			try {
+				Log.i("SearchActivity",
+						item.getCollectionName() + item.getArtworkUrl60());
+				final Drawable drawableFromUrl = Drawable.createFromStream(
+						((InputStream) new URL(item.getArtworkUrl60())
+								.getContent()), getString(R.string.imageDesc));
+				item.setImage(drawableFromUrl);
+				Log.i("Image set",
+						imageView.toString() + item.getCollectionName());
+				drawable = drawableFromUrl;
+			} catch (final Exception e) {
+				Log.w("SearchActivity", "Error loading drawable from " + item,
+						e);
+				item.setArtworkUrl60(null);
+			}
+		}
+		setDrawable(imageView, drawable, item);
+	}
+
+	@UiThread
+	void setDrawable(final ImageView imageView, final Drawable drawable,
+			final SearchResultItem item) {
+		if (item.equals(imageView.getTag())) {
+			// only set image if Tag is still valid
+			imageView.setImageDrawable(drawable);
 		}
 	}
 }

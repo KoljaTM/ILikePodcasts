@@ -29,6 +29,11 @@
             android:configChanges="orientation|screenSize" >
         </activity>
       
+        <activity
+            android:name="de.vanmar.android.ilikepodcasts.library.FeedDetailActivity_"
+            android:configChanges="orientation|screenSize" >
+        </activity>
+      
         <provider
 		      android:name=".content.AbstractFeedContentProvider"
 		      android:authorities="de.vanmar.android.ilikepodcasts.FeedContentProvider"

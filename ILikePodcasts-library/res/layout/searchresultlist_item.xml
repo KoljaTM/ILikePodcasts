@@ -7,8 +7,8 @@
       android:id="@+id/image" 
       android:contentDescription="@string/imageDesc"
       android:layout_gravity="center"
-      android:layout_width="64dp"
-      android:layout_height="64dp"
+      android:layout_width="60dp"
+      android:layout_height="60dp"
       android:scaleType="centerInside"
       />  
     
@@ -17,25 +17,25 @@
 	  android:id="@+id/tableLayout" android:layout_height="wrap_content" android:background="#FFFFFFFF" android:layout_width="fill_parent">
 	
 	    <TextView
-	        android:id="@+id/author"
+	        android:id="@+id/artist"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
 	        android:background="#00FF0000"
 	        android:padding="5dp"
 	        android:textColor="#FF000000"
-	        android:textSize="16sp" />
+	        android:textSize="12sp" />
 	
 	    <TextView
-	        android:id="@+id/title"
+	        android:id="@+id/feedName"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
 	        android:background="#00FF0000"
 	        android:padding="5dp"
 	        android:textColor="#FF000000"
-	        android:textSize="16sp" />
+	        android:textSize="18sp" />
 	
 	    <TextView
-	        android:id="@+id/type"
+	        android:id="@+id/url"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
 	        android:background="#00FF0000"
