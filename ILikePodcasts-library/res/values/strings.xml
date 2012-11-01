@@ -20,4 +20,6 @@
     <string name="searchButtonWaiting">Suche…</string>
 
     <string name="imageDesc">Bild</string>
+    <string name="addFeed">Abonnieren</string>
+    <string name="readRssWaitMessage">Podcast wird geladen…</string>
 </resources>

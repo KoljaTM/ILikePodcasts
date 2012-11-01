@@ -1,9 +1,9 @@
 package de.vanmar.android.ilikepodcasts.library.bo;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.Date;
 
-import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
@@ -32,7 +32,7 @@ public class Feed implements Serializable {
 	private Date lastUpdate;
 
 	@ForeignCollectionField(eager = true, orderColumnName = "published", orderAscending = false)
-	private ForeignCollection<Item> items;
+	private Collection<Item> items;
 
 	public int getId() {
 		return id;
@@ -58,11 +58,11 @@ public class Feed implements Serializable {
 		this.description = description;
 	}
 
-	public ForeignCollection<Item> getItems() {
+	public Collection<Item> getItems() {
 		return items;
 	}
 
-	public void setItems(final ForeignCollection<Item> items) {
+	public void setItems(final Collection<Item> items) {
 		this.items = items;
 	}
 

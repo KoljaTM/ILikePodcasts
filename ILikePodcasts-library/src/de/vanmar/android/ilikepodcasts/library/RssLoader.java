@@ -3,18 +3,24 @@ package de.vanmar.android.ilikepodcasts.library;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.sql.SQLException;
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
 import org.xmlpull.v1.XmlPullParser;
+import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlPullParserFactory;
 
+import android.content.Context;
+import android.net.Uri;
+
 import com.googlecode.androidannotations.annotations.EBean;
+import com.googlecode.androidannotations.annotations.RootContext;
 
 import de.vanmar.android.ilikepodcasts.library.bo.Feed;
 import de.vanmar.android.ilikepodcasts.library.bo.Item;
@@ -23,11 +29,22 @@ import de.vanmar.android.ilikepodcasts.library.db.DatabaseManager;
 @EBean
 public class RssLoader {
 
+	@RootContext
+	Context context;
+
 	private static final DateFormat RSS_DATE_FORMAT = new SimpleDateFormat(
 			"EEE, dd MMM yyyy HH:mm:ss zzz", Locale.ENGLISH);
 
-	public void loadRss(final Feed feed) throws Exception {
-		final URL url = new URL(feed.getUrl());
+	public void updateFeed(final Feed feed) throws Exception {
+		final Feed updatedFeed = readRssFeed(new URL(feed.getUrl()));
+		DatabaseManager.getInstance().saveFeed(updatedFeed,
+				updatedFeed.getItems());
+	}
+
+	public Feed readRssFeed(final URL url) throws XmlPullParserException,
+			IOException, ParseException {
+		final Feed feed = new Feed();
+		feed.setItems(new LinkedList<Item>());
 		final XmlPullParserFactory factory = XmlPullParserFactory.newInstance();
 		factory.setNamespaceAware(true);
 		final XmlPullParser xpp = factory.newPullParser();
@@ -36,13 +53,8 @@ public class RssLoader {
 		xpp.setInput(getInputStream(url), "UTF_8");
 
 		boolean insideItem = false;
-		final Map<String, Item> items = new HashMap<String, Item>();
-		for (final Item item : feed.getItems()) {
-			items.put(item.getUrl(), item);
-		}
 
 		Item item = null;
-
 		int eventType = xpp.getEventType();
 		while (eventType != XmlPullParser.END_DOCUMENT) {
 			if (eventType == XmlPullParser.START_TAG) {
@@ -93,13 +105,15 @@ public class RssLoader {
 				}
 			} else if (eventType == XmlPullParser.END_TAG
 					&& xpp.getName().equalsIgnoreCase("item")) {
-				items.put(item.getUrl(), item);
+				if (item.getMediaUrl() != null) {
+					feed.getItems().add(item);
+				}
 				item = null;
 				insideItem = false;
 			}
 			eventType = xpp.next(); // move to next element
 		}
-		DatabaseManager.getInstance().saveFeed(feed, items.values());
+		return feed;
 	}
 
 	public InputStream getInputStream(final URL url) {
@@ -113,7 +127,19 @@ public class RssLoader {
 	public void refreshFeeds() throws Exception {
 		final List<Feed> feeds = DatabaseManager.getInstance().getAllFeeds();
 		for (final Feed feed : feeds) {
-			loadRss(feed);
+			updateFeed(feed);
 		}
+		refreshContentProvider();
+	}
+
+	public void addFeed(final Feed feed) throws SQLException {
+		DatabaseManager.getInstance().saveFeed(feed, feed.getItems());
+		refreshContentProvider();
+	}
+
+	private void refreshContentProvider() {
+		context.getContentResolver().notifyChange(
+				Uri.parse(context.getString(R.string.feedContentProviderUri)),
+				null);
 	}
 }
