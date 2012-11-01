@@ -87,14 +87,20 @@ public class PlaylistManager {
 
 	public Item getNextItem(final Item item, final boolean removeFromPlaylist)
 			throws SQLException {
-		final int lastPlaylistIndex = item.getPlaylistIndex();
+		final int lastPlaylistIndex;
+		if (item != null) {
+			lastPlaylistIndex = item.getPlaylistIndex() == null ? 0 : item
+					.getPlaylistIndex();
+			if (removeFromPlaylist) {
+				item.setPlaylistIndex(null);
+				getDbManager().saveItem(item);
+				refreshItems();
+			}
+		} else {
+			lastPlaylistIndex = 0;
+		}
 		final Item nextItemInPlaylist = getDbManager().getNextItemInPlaylist(
 				lastPlaylistIndex);
-		if (removeFromPlaylist) {
-			item.setPlaylistIndex(null);
-			getDbManager().saveItem(item);
-			refreshItems();
-		}
 
 		return nextItemInPlaylist;
 	}
@@ -103,7 +109,7 @@ public class PlaylistManager {
 		final SharedPreferences preferences = PreferenceManager
 				.getDefaultSharedPreferences(context);
 		final SharedPreferences.Editor editor = preferences.edit();
-		editor.putInt(PLAYED_ITEM, item.getId());
+		editor.putInt(PLAYED_ITEM, item == null ? 0 : item.getId());
 		editor.putInt(PLAY_POSITION, position);
 		editor.commit();
 	}

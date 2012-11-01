@@ -60,6 +60,7 @@ public class MediaPlayerService extends Service {
 			try {
 				playing = playlistManager.getNextItem(playing, true);
 				if (playing == null) {
+					savePlayPosition();
 					stopForeground();
 					stopSelf();
 				} else {
@@ -272,6 +273,8 @@ public class MediaPlayerService extends Service {
 		if (mediaPlayer != null && playing != null) {
 			playlistManager.setLastPlayPosition(playing,
 					mediaPlayer.getCurrentPosition());
+		} else {
+			playlistManager.setLastPlayPosition(null, 0);
 		}
 	}
 
