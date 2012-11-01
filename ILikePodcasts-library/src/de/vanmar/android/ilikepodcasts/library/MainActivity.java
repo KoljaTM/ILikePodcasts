@@ -204,6 +204,12 @@ public class MainActivity extends FragmentActivity implements
 	}
 
 	@Override
+	public void playStopped() {
+		Log.i("MainActivity", "Play was stopped");
+		playerFragment.onStopped();
+	}
+
+	@Override
 	public void onPauseSelected() {
 		mpService.pause();
 	}
@@ -232,5 +238,4 @@ public class MainActivity extends FragmentActivity implements
 	public int getTotalDuration() {
 		return mpService.getTotalDuration();
 	}
-
 }

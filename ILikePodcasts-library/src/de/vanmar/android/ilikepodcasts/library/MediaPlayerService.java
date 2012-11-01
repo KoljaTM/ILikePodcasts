@@ -62,6 +62,9 @@ public class MediaPlayerService extends Service {
 				if (playing == null) {
 					savePlayPosition();
 					stopForeground();
+					for (final Callback callback : myServiceBinder.callbacks) {
+						callback.playStopped();
+					}
 					stopSelf();
 				} else {
 					playItem(playing);
@@ -128,10 +131,12 @@ public class MediaPlayerService extends Service {
 					startPlay();
 				} else {
 					final Item playPosition = playlistManager.getPlayPosition();
-					Log.i("MediaPlayerService",
-							"Play requested: " + playPosition.getTitle()
-									+ playPosition.getPosition());
-					playItem(playPosition);
+					if (playPosition != null) {
+						Log.i("MediaPlayerService",
+								"Play requested: " + playPosition.getTitle()
+										+ playPosition.getPosition());
+						playItem(playPosition);
+					}
 				}
 			} catch (final SQLException e) {
 				uiHelper.displayError(e);

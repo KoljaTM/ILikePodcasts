@@ -16,6 +16,7 @@ import com.googlecode.androidannotations.annotations.ViewById;
 
 import de.vanmar.android.ilikepodcasts.library.PlayerStatus;
 import de.vanmar.android.ilikepodcasts.library.PlayerStatus.PlayerState;
+import de.vanmar.android.ilikepodcasts.library.R;
 import de.vanmar.android.ilikepodcasts.library.bo.Item;
 
 @EFragment(resName = "player")
@@ -83,6 +84,9 @@ public class PlayerFragment extends Fragment {
 					final int progress, final boolean fromUser) {
 			}
 		});
+		// TODO: find good icon for SeekBar
+		position.setThumb(getActivity().getResources().getDrawable(
+				R.drawable.logo));
 		initProgress(totalDuration);
 	}
 
@@ -134,6 +138,13 @@ public class PlayerFragment extends Fragment {
 		playButton.setVisibility(View.VISIBLE);
 		pauseButton.setVisibility(View.GONE);
 		this.playing = false;
+	}
+
+	public void onStopped() {
+		playButton.setVisibility(View.VISIBLE);
+		pauseButton.setVisibility(View.GONE);
+		this.playing = false;
+		title.setText(null);
 	}
 
 	public void setPlayerStatus(final PlayerStatus playerStatus) {

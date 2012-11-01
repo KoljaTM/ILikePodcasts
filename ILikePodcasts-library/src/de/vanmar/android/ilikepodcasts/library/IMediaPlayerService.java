@@ -8,6 +8,8 @@ public interface IMediaPlayerService {
 		void playStarted(Item item, int totalDuration);
 
 		void playPaused();
+
+		void playStopped();
 	}
 
 	void registerCallback(Callback callback);
