@@ -45,6 +45,7 @@ public class RssLoader {
 			IOException, ParseException {
 		final Feed feed = new Feed();
 		feed.setItems(new LinkedList<Item>());
+		feed.setUrl(url.toString());
 		final XmlPullParserFactory factory = XmlPullParserFactory.newInstance();
 		factory.setNamespaceAware(true);
 		final XmlPullParser xpp = factory.newPullParser();

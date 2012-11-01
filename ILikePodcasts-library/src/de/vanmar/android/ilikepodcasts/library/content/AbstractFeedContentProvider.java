@@ -63,17 +63,22 @@ public abstract class AbstractFeedContentProvider extends ContentProvider {
 			final String sortOrder) {
 
 		try {
+			final Cursor cursor;
 			final int uriType = sURIMatcher.match(uri);
 			switch (uriType) {
 			case FEED_ID:
 				final int feedId = Integer.parseInt(uri.getLastPathSegment());
-				return dbManager.getFeedAsCursor(feedId);
+				cursor = dbManager.getFeedAsCursor(feedId);
+				break;
 			case FEEDS:
 				// no filter
-				return dbManager.getFeedsAsCursor(projection);
+				cursor = dbManager.getFeedsAsCursor(projection);
+				break;
 			default:
 				throw new IllegalArgumentException("Unknown URI");
 			}
+			cursor.setNotificationUri(getContext().getContentResolver(), uri);
+			return cursor;
 		} catch (final Exception e) {
 			Log.e("FeedContentProvider", e.getMessage(), e);
 			return null;

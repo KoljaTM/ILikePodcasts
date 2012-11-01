@@ -15,6 +15,9 @@ public class Feed implements Serializable {
 
 	public static final String ID = "_id";
 	public static final String TITLE = "title";
+	public static final String DESCRIPTION = "description";
+	public static final String URL = "url";
+	public static final String LAST_UPDATE = "last_update";
 
 	@DatabaseField(generatedId = true, columnName = ID)
 	private int id;
@@ -22,13 +25,13 @@ public class Feed implements Serializable {
 	@DatabaseField(columnName = TITLE)
 	private String title;
 
-	@DatabaseField
+	@DatabaseField(columnName = DESCRIPTION)
 	private String description;
 
-	@DatabaseField
+	@DatabaseField(columnName = URL, unique = true)
 	private String url;
 
-	@DatabaseField
+	@DatabaseField(columnName = LAST_UPDATE)
 	private Date lastUpdate;
 
 	@ForeignCollectionField(eager = true, orderColumnName = "published", orderAscending = false)

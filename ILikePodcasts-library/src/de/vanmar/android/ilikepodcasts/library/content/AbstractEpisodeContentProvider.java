@@ -76,31 +76,29 @@ public abstract class AbstractEpisodeContentProvider extends ContentProvider {
 			final String sortOrder) {
 
 		try {
+			final Cursor cursor;
 			final int uriType = sURIMatcher.match(uri);
 			switch (uriType) {
 			case EPISODE_ID:
 				return null;
 			case EPISODES:
 				// no filter
-				return dbManager.getItemsAsCursor(projection);
+				cursor = dbManager.getItemsAsCursor(projection);
+				break;
 			case FEED:
 				// by feed
 				final int feedId = Integer.parseInt(uri.getLastPathSegment());
-				final Cursor itemsAsCursor = dbManager.getItemsAsCursor(
-						projection, feedId);
-				itemsAsCursor.setNotificationUri(getContext()
-						.getContentResolver(), uri);
-				return itemsAsCursor;
+				cursor = dbManager.getItemsAsCursor(projection, feedId);
+				break;
 			case PLAYLIST:
 				// playlist
-				final Cursor playlistAsCursor = dbManager
-						.getPlaylistAsCursor(projection);
-				playlistAsCursor.setNotificationUri(getContext()
-						.getContentResolver(), uri);
-				return playlistAsCursor;
+				cursor = dbManager.getPlaylistAsCursor(projection);
+				break;
 			default:
 				throw new IllegalArgumentException("Unknown URI");
 			}
+			cursor.setNotificationUri(getContext().getContentResolver(), uri);
+			return cursor;
 		} catch (final Exception e) {
 			Log.e("EpisodeContentProvider", e.getMessage(), e);
 			return null;

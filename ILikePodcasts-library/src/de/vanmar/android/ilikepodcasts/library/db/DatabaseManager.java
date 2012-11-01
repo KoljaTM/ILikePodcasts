@@ -46,9 +46,24 @@ public class DatabaseManager {
 
 	public void saveFeed(final Feed feed, final Collection<Item> items)
 			throws SQLException {
-		getHelper().getFeedDao().createOrUpdate(feed);
+		final Dao<Feed, Integer> feedDao = getHelper().getFeedDao();
+		final List<Feed> existingFeed = feedDao.queryBuilder().limit(1L)
+				.where().eq(Feed.URL, feed.getUrl()).query();
+		final Feed feedToSave;
+		if (existingFeed.isEmpty()) {
+			feedToSave = new Feed();
+		} else {
+			feedToSave = existingFeed.get(0);
+		}
+
+		feedToSave.setDescription(feed.getDescription());
+		feedToSave.setLastUpdate(feed.getLastUpdate());
+		feedToSave.setTitle(feed.getTitle());
+		feedToSave.setUrl(feed.getUrl());
+
+		feedDao.createOrUpdate(feedToSave);
 		for (final Item item : items) {
-			item.setFeed(feed);
+			item.setFeed(feedToSave);
 			getHelper().getItemDao().createOrUpdate(item);
 		}
 	}
