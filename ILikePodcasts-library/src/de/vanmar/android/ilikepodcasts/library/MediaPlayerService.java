@@ -239,7 +239,8 @@ public class MediaPlayerService extends Service {
 			final FileInputStream inputStream = new FileInputStream(file);
 			mediaPlayer.setDataSource(inputStream.getFD());
 			mediaPlayer.prepare();
-			Log.w("MediaPlayerService", "starting");
+			Log.w("MediaPlayerService",
+					"starting: " + item.getTitle() + item.getPosition());
 			mediaPlayer.seekTo(item.getPosition());
 			startPlay();
 		} catch (final Exception e) {
@@ -283,15 +284,20 @@ public class MediaPlayerService extends Service {
 		}
 	}
 
-	@Background
-	void savePositionInCurrentItem() {
+	private void savePositionInCurrentItem() {
 		if (mediaPlayer != null && playing != null) {
-			try {
-				playlistManager.savePlayPosition(playing,
-						mediaPlayer.getCurrentPosition());
-			} catch (final SQLException e) {
-				uiHelper.displayError(e);
-			}
+			savePositionInCurrentItemInBackground(playing,
+					mediaPlayer.getCurrentPosition());
+		}
+	}
+
+	@Background
+	void savePositionInCurrentItemInBackground(final Item item,
+			final int position) {
+		try {
+			playlistManager.savePlayPosition(item, position);
+		} catch (final SQLException e) {
+			uiHelper.displayError(e);
 		}
 	}
 
