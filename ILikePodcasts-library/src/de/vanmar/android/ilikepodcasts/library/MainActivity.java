@@ -7,11 +7,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.IBinder;
-import android.os.ResultReceiver;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
+import android.widget.Toast;
 import android.widget.ViewAnimator;
 
 import com.googlecode.androidannotations.annotations.Background;
@@ -20,9 +19,9 @@ import com.googlecode.androidannotations.annotations.EActivity;
 import com.googlecode.androidannotations.annotations.FragmentById;
 import com.googlecode.androidannotations.annotations.OptionsItem;
 import com.googlecode.androidannotations.annotations.OptionsMenu;
+import com.googlecode.androidannotations.annotations.UiThread;
 import com.googlecode.androidannotations.annotations.ViewById;
 
-import de.vanmar.android.ilikepodcasts.library.IMediaPlayerService.Callback;
 import de.vanmar.android.ilikepodcasts.library.bo.Feed;
 import de.vanmar.android.ilikepodcasts.library.bo.Item;
 import de.vanmar.android.ilikepodcasts.library.db.DatabaseManager;
@@ -41,7 +40,8 @@ import de.vanmar.android.ilikepodcasts.library.util.UiHelper;
 @OptionsMenu(resName = "menu")
 public class MainActivity extends FragmentActivity implements
 		FeedsFragmentListener, EpisodesFragmentListener,
-		PlaylistFragmentListener, PlayerFragmentListener, Callback {
+		PlaylistFragmentListener, PlayerFragmentListener,
+		IMediaPlayerService.Callback, IDownloadService.Callback {
 
 	private static final int CHILD_FEED_FRAGMENT = 0;
 	private static final int CHILD_EPISODES_FRAGMENT = 1;
@@ -71,6 +71,9 @@ public class MainActivity extends FragmentActivity implements
 	private ServiceConnection mpServiceConnection;
 	private IMediaPlayerService mpService;
 
+	private ServiceConnection dlServiceConnection;
+	private IDownloadService dlService;
+
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -91,11 +94,35 @@ public class MainActivity extends FragmentActivity implements
 				mpService = (IMediaPlayerService) service;
 				mpService.registerCallback(MainActivity.this);
 				playerFragment.setPlayerStatus(mpService.getPlayerStatus());
-				Log.i("INFO", "Service bound ");
+				Log.i("INFO", "MediaplayerService bound ");
 			}
 		};
-		final Intent intent = new Intent(this, MediaPlayerService_.class);
-		bindService(intent, mpServiceConnection, Context.BIND_AUTO_CREATE);
+		final Intent mpServiceIntent = new Intent(this,
+				MediaPlayerService_.class);
+		bindService(mpServiceIntent, mpServiceConnection,
+				Context.BIND_AUTO_CREATE);
+
+		// Bind to DownloadService
+		dlServiceConnection = new ServiceConnection() {
+
+			@Override
+			public void onServiceDisconnected(final ComponentName name) {
+				dlService.unRegisterCallback(MainActivity.this);
+				dlService = null;
+			}
+
+			@Override
+			public void onServiceConnected(final ComponentName name,
+					final IBinder service) {
+				dlService = (IDownloadService) service;
+				dlService.registerCallback(MainActivity.this);
+				playerFragment.setPlayerStatus(mpService.getPlayerStatus());
+				Log.i("INFO", "DownloadService bound ");
+			}
+		};
+		final Intent dlServiceIntent = new Intent(this, DownloadService_.class);
+		bindService(dlServiceIntent, dlServiceConnection,
+				Context.BIND_AUTO_CREATE);
 
 	}
 
@@ -107,6 +134,7 @@ public class MainActivity extends FragmentActivity implements
 	@Override
 	protected void onDestroy() {
 		unbindService(mpServiceConnection);
+		unbindService(dlServiceConnection);
 		super.onDestroy();
 	}
 
@@ -162,23 +190,9 @@ public class MainActivity extends FragmentActivity implements
 	}
 
 	protected void startDownload(final Item item) {
-		final Intent intent = new Intent(this, DownloadService_.class);
-		intent.putExtra(DownloadService.EXTRA_ITEM, item);
-		intent.putExtra("receiver", new ResultReceiver(new Handler()) {
-			@Override
-			protected void onReceiveResult(final int resultCode,
-					final Bundle resultData) {
-				super.onReceiveResult(resultCode, resultData);
-				if (resultCode == DownloadService.UPDATE_PROGRESS) {
-					final int progress = resultData.getInt("progress");
-					// holder.progress.setText(String.valueOf(progress));
-					if (progress == 100) {
-						// // onFeedSelected(feed);
-					}
-				}
-			}
-		});
-		startService(intent);
+		if (dlService != null) {
+			dlService.startDownload(item);
+		}
 	}
 
 	@Override
@@ -237,5 +251,21 @@ public class MainActivity extends FragmentActivity implements
 	@Override
 	public int getTotalDuration() {
 		return mpService.getTotalDuration();
+	}
+
+	@Override
+	public void onDownloadProgress(final Item item, final int progress,
+			final int total) {
+		// Log.i("DownloadService", "downloaded " + progress + " bytes from "
+		// + item.getTitle());
+	}
+
+	@Override
+	@UiThread
+	public void onDownloadCompleted(final Item item) {
+		Log.i("DownloadService", "downloaded " + item.getTitle());
+		Toast.makeText(this,
+				getString(R.string.downloadComplete, item.getTitle()),
+				Toast.LENGTH_SHORT).show();
 	}
 }
