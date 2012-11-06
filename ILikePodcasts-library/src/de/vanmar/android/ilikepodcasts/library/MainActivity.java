@@ -22,7 +22,6 @@ import com.googlecode.androidannotations.annotations.OptionsMenu;
 import com.googlecode.androidannotations.annotations.UiThread;
 import com.googlecode.androidannotations.annotations.ViewById;
 
-import de.vanmar.android.ilikepodcasts.library.bo.Feed;
 import de.vanmar.android.ilikepodcasts.library.bo.Item;
 import de.vanmar.android.ilikepodcasts.library.db.DatabaseManager;
 import de.vanmar.android.ilikepodcasts.library.fragment.EpisodesFragment;
@@ -159,8 +158,8 @@ public class MainActivity extends FragmentActivity implements
 	}
 
 	@Override
-	public void onFeedSelected(final Feed feed) {
-		episodesFragment.onFeedSelected(feed);
+	public void onFeedSelected(final Integer feedId) {
+		episodesFragment.onFeedSelected(feedId);
 		fragmentContainer.setDisplayedChild(CHILD_EPISODES_FRAGMENT);
 	}
 
@@ -176,16 +175,17 @@ public class MainActivity extends FragmentActivity implements
 	}
 
 	@Override
-	public void onItemSelected(final Item item) {
-		if (item.getMediaPath() == null) {
-			startDownload(item);
-		} else {
-			try {
+	public void onItemSelected(final Integer itemId) {
+		try {
+			final Item item = DatabaseManager.getInstance().getItem(itemId);
+			if (item.getMediaPath() == null) {
+				startDownload(item);
+			} else {
 				playlistManager.enqueueItem(item);
 				fragmentContainer.setDisplayedChild(CHILD_PLAYLIST_FRAGMENT);
-			} catch (final SQLException e) {
-				uiHelper.displayError(e);
 			}
+		} catch (final SQLException e) {
+			uiHelper.displayError(e);
 		}
 	}
 
@@ -196,8 +196,12 @@ public class MainActivity extends FragmentActivity implements
 	}
 
 	@Override
-	public void onItemPlay(final Item item) {
-		mpService.play(item);
+	public void onItemPlay(final Integer itemId) {
+		try {
+			mpService.play(DatabaseManager.getInstance().getItem(itemId));
+		} catch (final SQLException e) {
+			uiHelper.displayError(e);
+		}
 	}
 
 	@Override

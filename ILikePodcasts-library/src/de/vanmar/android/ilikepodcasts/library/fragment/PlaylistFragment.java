@@ -24,7 +24,7 @@ public class PlaylistFragment extends Fragment implements
 		LoaderManager.LoaderCallbacks<Cursor> {
 
 	public interface PlaylistFragmentListener {
-		void onItemPlay(Item item);
+		void onItemPlay(Integer itemId);
 	}
 
 	private static final int PLAYLIST_LOADER = 3;
@@ -47,8 +47,8 @@ public class PlaylistFragment extends Fragment implements
 		final int[] uiBindTo = { R.id.title };
 
 		adapter = new PlayListAdapter(getActivity(),
-				(PlaylistFragmentListener) getActivity(), uiHelper, null,
-				uiBindFrom, uiBindTo, 0);
+				(PlaylistFragmentListener) getActivity(), null, uiBindFrom,
+				uiBindTo, 0);
 		playlist.setAdapter(adapter);
 		getLoaderManager().initLoader(PLAYLIST_LOADER, null, this);
 	}

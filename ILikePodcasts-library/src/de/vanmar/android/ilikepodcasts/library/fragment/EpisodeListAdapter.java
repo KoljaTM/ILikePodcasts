@@ -1,7 +1,5 @@
 package de.vanmar.android.ilikepodcasts.library.fragment;
 
-import java.sql.SQLException;
-
 import android.app.Activity;
 import android.database.Cursor;
 import android.support.v4.widget.SimpleCursorAdapter;
@@ -11,17 +9,13 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import de.vanmar.android.ilikepodcasts.library.R;
 import de.vanmar.android.ilikepodcasts.library.bo.Item;
-import de.vanmar.android.ilikepodcasts.library.db.DatabaseManager;
 import de.vanmar.android.ilikepodcasts.library.fragment.EpisodesFragment.EpisodesFragmentListener;
-import de.vanmar.android.ilikepodcasts.library.util.UiHelper;
 
 public class EpisodeListAdapter extends SimpleCursorAdapter {
 	public static final String[] projection = new String[] { Item.ID,
 			Item.TITLE, Item.MEDIA_PATH };
 
 	private EpisodesFragmentListener handler;
-	private UiHelper uiHelper;
-	private DatabaseManager dbManager;
 
 	private static class ViewHolder {
 		public TextView download;
@@ -29,13 +23,10 @@ public class EpisodeListAdapter extends SimpleCursorAdapter {
 	}
 
 	protected EpisodeListAdapter(final Activity context,
-			final EpisodesFragmentListener handler, final UiHelper uiHelper,
-			final Cursor cursor, final String[] from, final int[] to,
-			final int flags) {
+			final EpisodesFragmentListener handler, final Cursor cursor,
+			final String[] from, final int[] to, final int flags) {
 		super(context, R.layout.episodesitem, cursor, from, to, flags);
 		this.handler = handler;
-		this.uiHelper = uiHelper;
-		this.dbManager = DatabaseManager.getInstance();
 	}
 
 	@Override
@@ -61,17 +52,12 @@ public class EpisodeListAdapter extends SimpleCursorAdapter {
 		}
 
 		final int itemId = getCursor().getInt(0);
-		try {
-			final Item item = dbManager.getItem(itemId);
-			view.setOnClickListener(new OnClickListener() {
-				@Override
-				public void onClick(final View v) {
-					handler.onItemSelected(item);
-				}
-			});
-		} catch (final SQLException e) {
-			uiHelper.displayError(e);
-		}
+		view.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(final View v) {
+				handler.onItemSelected(itemId);
+			}
+		});
 
 		return view;
 	}

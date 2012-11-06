@@ -24,7 +24,7 @@ public class FeedsFragment extends Fragment implements
 		LoaderManager.LoaderCallbacks<Cursor> {
 
 	public interface FeedsFragmentListener {
-		void onFeedSelected(Feed feed);
+		void onFeedSelected(Integer feedId);
 	}
 
 	private static final int FEED_LIST_LOADER = 1;
@@ -49,8 +49,8 @@ public class FeedsFragment extends Fragment implements
 		getLoaderManager().initLoader(FEED_LIST_LOADER, null, this);
 
 		adapter = new FeedsListAdapter(getActivity(),
-				(FeedsFragmentListener) getActivity(), uiHelper, null,
-				uiBindFrom, uiBindTo, 0);
+				(FeedsFragmentListener) getActivity(), null, uiBindFrom,
+				uiBindTo, 0);
 		feedlist.setAdapter(adapter);
 	}
 
