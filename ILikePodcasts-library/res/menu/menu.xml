@@ -6,12 +6,12 @@
           android:showAsAction="ifRoom"/>
 
     <item android:id="@+id/playlist"
-          android:icon="@drawable/play"
-          android:title="@string/refresh"
+          android:icon="@drawable/playlist"
+          android:title="@string/playlist"
           android:showAsAction="ifRoom"/>
 
     <item android:id="@+id/search"
-          android:icon="@drawable/next"
-          android:title="@string/refresh"
+          android:icon="@drawable/search"
+          android:title="@string/search"
           android:showAsAction="ifRoom"/>
 </menu>

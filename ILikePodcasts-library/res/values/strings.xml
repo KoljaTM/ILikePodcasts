@@ -3,6 +3,9 @@
     <string name="episodeContentProviderUri">content://de.vanmar.android.ilikepodcasts.EpisodeContentProvider/episodes</string>
     <string name="app_name">ILikePodcasts-App</string>
     <string name="refresh">Aktualisieren</string>
+    <string name="playlist">Playlist</string>
+    <string name="search">Podcast-Suche</string>
+    
     <string name="networkNotAvailable">Internet nicht verfügbar</string>
 
     <string name="previous">Zurück</string>
