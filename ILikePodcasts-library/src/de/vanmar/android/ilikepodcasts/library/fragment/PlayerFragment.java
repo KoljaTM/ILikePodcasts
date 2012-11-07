@@ -1,7 +1,11 @@
 package de.vanmar.android.ilikepodcasts.library.fragment;
 
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.text.format.DateFormat;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.SeekBar;
@@ -23,6 +27,11 @@ import de.vanmar.android.ilikepodcasts.library.bo.Item;
 public class PlayerFragment extends Fragment {
 	private PlayerFragmentListener listener;
 
+	private static final int HOUR = 1000 * 60 * 60;
+
+	private static final String DURATION_FORMAT = "mm:ss";
+	private static final String DURATION_FORMAT_WITH_HOUR = "h:mm:ss";
+
 	@ViewById(resName = "playButton")
 	ImageButton playButton;
 
@@ -31,6 +40,9 @@ public class PlayerFragment extends Fragment {
 
 	@ViewById(resName = "title")
 	TextView title;
+
+	@ViewById(resName = "time")
+	TextView time;
 
 	@ViewById(resName = "position")
 	SeekBar position;
@@ -82,6 +94,7 @@ public class PlayerFragment extends Fragment {
 			@Override
 			public void onProgressChanged(final SeekBar seekBar,
 					final int progress, final boolean fromUser) {
+				time.setText(formatTime(progress, totalDuration));
 			}
 		});
 		// TODO: find good icon for SeekBar
@@ -114,8 +127,27 @@ public class PlayerFragment extends Fragment {
 	void getProgress() {
 		final int progress = listener.getPlaybackPosition();
 		this.position.setProgress(progress);
+		// time.setText(formatTime(progress, totalDuration));
 		if (playing) {
 			getProgress();
+		}
+	}
+
+	private CharSequence formatTime(final int progress, final int total) {
+		final CharSequence progressString = durationString(progress);
+		final CharSequence totalString = durationString(total);
+		return String.format(getActivity().getString(R.string.playPosition),
+				progressString, totalString);
+	}
+
+	private CharSequence durationString(final int duration) {
+		final Calendar date = new GregorianCalendar();
+		date.clear();
+		date.add(Calendar.MILLISECOND, duration);
+		if (duration < HOUR) {
+			return DateFormat.format(DURATION_FORMAT, date);
+		} else {
+			return DateFormat.format(DURATION_FORMAT_WITH_HOUR, date);
 		}
 	}
 
@@ -145,6 +177,7 @@ public class PlayerFragment extends Fragment {
 		pauseButton.setVisibility(View.GONE);
 		this.playing = false;
 		title.setText(null);
+		time.setText(null);
 	}
 
 	public void setPlayerStatus(final PlayerStatus playerStatus) {

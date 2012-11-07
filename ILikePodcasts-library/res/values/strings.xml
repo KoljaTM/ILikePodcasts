@@ -12,6 +12,7 @@
     <string name="play">Play</string>
     <string name="pause">Pause</string>
     <string name="next">Weiter</string>
+    <string name="playPosition" formatted="false">%s / %s</string>
 
     <string name="position">%s</string>
     <string name="nowPlayingTitle">ILikePodcasts</string>
