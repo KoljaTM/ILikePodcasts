@@ -85,8 +85,8 @@ public class RssLoader {
 							if ("url".equalsIgnoreCase(attributeName)) {
 								item.setMediaUrl(attributeValue);
 							} else if ("length".equalsIgnoreCase(attributeName)) {
-								item.setMediaLength(Long
-										.parseLong(attributeValue));
+								item.setMediaLength(Integer
+										.parseInt(attributeValue.trim()));
 							} else if ("type".equalsIgnoreCase(attributeName)) {
 								item.setMediaType(attributeValue);
 							}

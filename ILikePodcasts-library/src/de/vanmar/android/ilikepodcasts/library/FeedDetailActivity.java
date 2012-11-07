@@ -56,8 +56,9 @@ public class FeedDetailActivity extends FragmentActivity {
 			displayFeed();
 		} catch (final Exception e) {
 			e.printStackTrace();
-			progressDialog.dismiss();
 			uiHelper.displayError(e);
+		} finally {
+			progressDialog.dismiss();
 		}
 
 	}
@@ -65,17 +66,26 @@ public class FeedDetailActivity extends FragmentActivity {
 	@UiThread
 	void displayFeed() {
 		feedTitle.setText(feed.getTitle());
-		progressDialog.dismiss();
 	}
 
 	@Click(resName = "addFeed")
 	void onAddFeedClicked() {
-		if (feed != null) {
-			try {
+		progressDialog = ProgressDialog.show(this, "",
+				getString(R.string.saveRssWaitMessage), true);
+		addFeed();
+	}
+
+	@Background
+	void addFeed() {
+		try {
+			if (feed != null) {
 				rssLoader.addFeed(feed);
-			} catch (final SQLException e) {
-				uiHelper.displayError(e);
 			}
+			finish();
+		} catch (final SQLException e) {
+			uiHelper.displayError(e);
+		} finally {
+			progressDialog.dismiss();
 		}
 	}
 

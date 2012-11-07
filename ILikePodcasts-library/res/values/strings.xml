@@ -30,4 +30,5 @@
     <string name="imageDesc">Bild</string>
     <string name="addFeed">Abonnieren</string>
     <string name="readRssWaitMessage">Podcast wird geladen…</string>
+    <string name="saveRssWaitMessage">Podcast wird abonniert</string>
 </resources>

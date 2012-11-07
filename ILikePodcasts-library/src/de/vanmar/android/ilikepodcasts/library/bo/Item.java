@@ -41,7 +41,7 @@ public class Item implements Serializable {
 	private String mediaUrl;
 
 	@DatabaseField(columnName = MEDIA_LENGTH)
-	private Long mediaLength;
+	private Integer mediaLength;
 
 	@DatabaseField(columnName = MEDIA_PATH)
 	private String mediaPath;
@@ -114,11 +114,11 @@ public class Item implements Serializable {
 		this.mediaUrl = mediaUrl;
 	}
 
-	public Long getMediaLength() {
+	public Integer getMediaLength() {
 		return mediaLength;
 	}
 
-	public void setMediaLength(final Long mediaLength) {
+	public void setMediaLength(final Integer mediaLength) {
 		this.mediaLength = mediaLength;
 	}
 
