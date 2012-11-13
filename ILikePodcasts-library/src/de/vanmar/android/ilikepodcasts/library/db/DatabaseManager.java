@@ -20,10 +20,14 @@ public class DatabaseManager {
 
 	static private DatabaseManager instance;
 
-	static public void init(final Context ctx) {
+	public static void init(final Context ctx) {
 		if (null == instance) {
 			instance = new DatabaseManager(ctx);
 		}
+	}
+
+	protected static void forceInit(final Context ctx) {
+		instance = new DatabaseManager(ctx);
 	}
 
 	static public DatabaseManager getInstance() {

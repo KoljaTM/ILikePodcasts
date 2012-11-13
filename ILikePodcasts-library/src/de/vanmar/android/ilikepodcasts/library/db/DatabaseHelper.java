@@ -26,7 +26,6 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 	// Version history: DB:1 App Version:1
 	private static final int DATABASE_VERSION = 1;
 
-	// the DAO object we use to access the SimpleData table
 	private Dao<Feed, Integer> feedDao = null;
 	private Dao<Item, Integer> itemDao = null;
 
@@ -42,7 +41,6 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 		try {
 			TableUtils.createTable(connectionSource, Feed.class);
 			TableUtils.createTable(connectionSource, Item.class);
-			database.execSQL("insert into feed(url, title) values('http://www.merriam-webster.com/word/index.xml', 'Word a Day')");
 		} catch (final SQLException e) {
 			Log.e(DatabaseHelper.class.getName(), "Can't create database", e);
 			throw new RuntimeException(e);
@@ -61,7 +59,6 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 			switch (oldVersion) {
 			case 1:
 				// allSql.add("alter table Feed add column `url` VARCHAR");
-				// allSql.add("update Feed set url='http://www.weeklyweinersmith.com/?feed=rss2'");
 			}
 			for (final String sql : allSql) {
 				db.execSQL(sql);
