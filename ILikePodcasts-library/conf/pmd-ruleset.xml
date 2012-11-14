@@ -1,0 +1,347 @@
+<?xml version="1.0"?>
+<ruleset name="ILikePodcasts" xmlns="http://pmd.sf.net/rulesets/1.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://pmd.sf.net/rulesets/1.0.0 http://pmd.sf.net/ruleset_xml_schema.xsd"
+	xsi:noNamespaceSchemaLocation="http://pmd.sf.net/ruleset_xml_schema.xsd">
+
+	<description>
+		PMD rule set to check code for errors and bad habits
+	</description>
+	
+	<!-- exclude generated sources -->
+<!-- 	<exclude-pattern>.*/.*_\.java</exclude-pattern>  -->
+	
+	<!-- 
+		THE MEANING OF THE PRIORITIES
+		
+		1. Change absolutely required. Behavior is critically broken/buggy.
+		2. Change highly recommended. Behavior is quite likely to be broken/buggy.
+		3. Change recommended. Behavior is confusing, perhaps buggy, and/or against standards/best practices.
+		4. Change optional. Behavior is not likely to be buggy, but more just flies in the face of standards/style/good taste.
+		5. Change highly optional. Nice to have.
+	 -->
+	
+	<!-- check for unused code -->
+	
+	<rule ref="rulesets/unusedcode.xml/UnusedPrivateField">
+		<priority>3</priority>
+	</rule>
+	<rule ref="rulesets/unusedcode.xml/UnusedLocalVariable">
+		<priority>3</priority>
+	</rule>
+	<rule ref="rulesets/unusedcode.xml/UnusedPrivateMethod">
+		<priority>3</priority>
+	</rule>
+	<rule ref="rulesets/unusedcode.xml/UnusedFormalParameter">
+		<priority>3</priority>
+	</rule>
+	
+	<!-- check basic rules -->
+	
+	<rule ref="rulesets/basic.xml/EmptyCatchBlock">
+		<priority>1</priority>
+	</rule>
+	<rule ref="rulesets/basic.xml/EmptyIfStmt">
+		<priority>2</priority>
+	</rule>
+	<rule ref="rulesets/basic.xml/EmptyWhileStmt">
+		<priority>2</priority>
+	</rule>
+	<rule ref="rulesets/basic.xml/EmptyTryBlock">
+		<priority>2</priority>
+	</rule>
+	<rule ref="rulesets/basic.xml/EmptyFinallyBlock">
+		<priority>2</priority>
+	</rule>
+	<rule ref="rulesets/basic.xml/EmptySwitchStatements">
+		<priority>2</priority>
+	</rule>
+	<rule ref="rulesets/basic.xml/JumbledIncrementer">
+		<priority>3</priority>
+	</rule>
+	<rule ref="rulesets/basic.xml/ForLoopShouldBeWhileLoop">
+		<priority>3</priority>
+	</rule>
+	<rule ref="rulesets/basic.xml/UnnecessaryConversionTemporary">
+		<priority>3</priority>
+	</rule>
+	<rule ref="rulesets/basic.xml/OverrideBothEqualsAndHashcode">
+		<priority>2</priority>
+	</rule>
+	<rule ref="rulesets/basic.xml/DoubleCheckedLocking">
+		<priority>1</priority>
+	</rule>
+	<rule ref="rulesets/basic.xml/ReturnFromFinallyBlock">
+		<priority>1</priority>
+	</rule>
+	<rule ref="rulesets/basic.xml/EmptySynchronizedBlock">
+		<priority>2</priority>
+	</rule>
+	<rule ref="rulesets/basic.xml/UnnecessaryReturn">
+		<priority>2</priority>
+	</rule>
+	<rule ref="rulesets/basic.xml/EmptyStaticInitializer">
+		<priority>2</priority>
+	</rule>
+	<rule ref="rulesets/basic.xml/UnconditionalIfStatement">
+		<priority>2</priority>
+	</rule>
+	<rule ref="rulesets/basic.xml/EmptyStatementNotInLoop">
+		<priority>2</priority>
+	</rule>
+	<rule ref="rulesets/basic.xml/BooleanInstantiation">
+		<priority>2</priority>
+	</rule>
+	<rule ref="rulesets/basic.xml/UnnecessaryFinalModifier">
+		<priority>4</priority>
+	</rule>
+	<rule ref="rulesets/basic.xml/UselessOverridingMethod">
+		<priority>3</priority>
+	</rule>
+	<rule ref="rulesets/basic.xml/ClassCastExceptionWithToArray">
+		<priority>3</priority>
+	</rule>
+	<rule ref="rulesets/basic.xml/AvoidDecimalLiteralsInBigDecimalConstructor">
+		<priority>2</priority>
+	</rule>
+	<rule ref="rulesets/basic.xml/UselessOperationOnImmutable">
+		<priority>2</priority>
+	</rule>
+	<rule ref="rulesets/basic.xml/MisplacedNullCheck">
+		<priority>2</priority>
+	</rule>
+	<rule ref="rulesets/basic.xml/UnusedNullCheckInEquals">
+		<priority>1</priority>
+	</rule>
+	<rule ref="rulesets/basic.xml/BrokenNullCheck">
+		<priority>1</priority>
+	</rule>
+	<rule ref="rulesets/basic.xml/BigIntegerInstantiation">
+		<priority>1</priority>
+	</rule>
+	<rule ref="rulesets/basic.xml/AvoidUsingOctalValues">
+		<priority>3</priority>
+	</rule>
+	<rule ref="rulesets/basic.xml/AvoidUsingHardCodedIP">
+		<priority>3</priority>
+	</rule>
+	<rule ref="rulesets/basic.xml/AvoidMultipleUnaryOperators">
+		<priority>3</priority>
+	</rule>
+	<rule ref="rulesets/basic.xml/EmptyInitializer">
+		<priority>2</priority>
+	</rule>
+	
+	<!-- check String and StringBuffer handling -->
+	
+	<rule ref="rulesets/strings.xml/AvoidDuplicateLiterals">
+		<priority>3</priority>
+		<properties>
+			<property name="skipAnnotations" value="true" />
+		</properties>
+	</rule>
+	<rule ref="rulesets/strings.xml/StringInstantiation">
+		<priority>2</priority>
+	</rule>
+	<rule ref="rulesets/strings.xml/StringToString">
+		<priority>3</priority>
+	</rule>
+	<rule ref="rulesets/strings.xml/InefficientStringBuffering">
+		<priority>4</priority>
+	</rule>
+	<rule ref="rulesets/strings.xml/UnnecessaryCaseChange">
+		<priority>3</priority>
+	</rule>
+	<rule ref="rulesets/strings.xml/UseStringBufferLength">
+		<priority>3</priority>
+	</rule>
+	<rule ref="rulesets/strings.xml/AppendCharacterWithChar">
+		<priority>4</priority>
+	</rule>
+	<rule ref="rulesets/strings.xml/ConsecutiveLiteralAppends">
+		<priority>4</priority>
+	</rule>
+	<rule ref="rulesets/strings.xml/UseIndexOfChar">
+		<priority>4</priority>
+	</rule>
+	<rule ref="rulesets/strings.xml/UselessStringValueOf">
+		<priority>4</priority>
+	</rule>
+	<rule ref="rulesets/strings.xml/StringBufferInstantiationWithChar">
+		<priority>4</priority>
+	</rule>
+	<rule ref="rulesets/strings.xml/UseEqualsToCompareStrings">
+		<priority>2</priority>
+	</rule>
+	<rule ref="rulesets/strings.xml/AvoidStringBufferField">
+		<priority>3</priority>
+	</rule>
+	
+	<!-- Design Patterns -->
+	
+	<rule ref="rulesets/design.xml/UseSingleton">
+		<priority>3</priority>
+	</rule>
+	<rule ref="rulesets/design.xml/SimplifyBooleanReturns">
+		<priority>3</priority>
+	</rule>
+	<rule ref="rulesets/design.xml/SimplifyBooleanExpressions">
+		<priority>3</priority>
+	</rule>
+	<rule ref="rulesets/design.xml/SwitchStmtsShouldHaveDefault">
+		<priority>3</priority>
+	</rule>
+	<rule ref="rulesets/design.xml/AvoidDeeplyNestedIfStmts">
+		<priority>3</priority>
+	</rule>
+	<rule ref="rulesets/design.xml/AvoidReassigningParameters">
+		<priority>2</priority>
+	</rule>
+	<rule ref="rulesets/design.xml/SwitchDensity">
+		<priority>3</priority>
+	</rule>
+	<rule ref="rulesets/design.xml/ConstructorCallsOverridableMethod">
+		<priority>3</priority>
+	</rule>
+	<rule ref="rulesets/design.xml/AccessorClassGeneration">
+		<priority>3</priority>
+	</rule>
+	<rule ref="rulesets/design.xml/FinalFieldCouldBeStatic">
+		<priority>3</priority>
+	</rule>
+	<rule ref="rulesets/design.xml/CloseResource">
+		<priority>3</priority>
+	</rule>
+	<rule ref="rulesets/design.xml/NonStaticInitializer">
+		<priority>3</priority>
+	</rule>
+	<rule ref="rulesets/design.xml/DefaultLabelNotLastInSwitchStmt">
+		<priority>3</priority>
+	</rule>
+	<rule ref="rulesets/design.xml/NonCaseLabelInSwitchStatement">
+		<priority>1</priority>
+	</rule>
+	<rule ref="rulesets/design.xml/OptimizableToArrayCall">
+		<priority>3</priority>
+	</rule>
+	<rule ref="rulesets/design.xml/BadComparison">
+		<priority>3</priority>
+	</rule>
+	<rule ref="rulesets/design.xml/EqualsNull">
+		<priority>1</priority>
+	</rule>
+	<rule ref="rulesets/design.xml/InstantiationToGetClass">
+		<priority>4</priority>
+	</rule>
+	<rule ref="rulesets/design.xml/IdempotentOperations">
+		<priority>3</priority>
+	</rule>
+	<rule ref="rulesets/design.xml/SimpleDateFormatNeedsLocale">
+		<priority>3</priority>
+	</rule>
+	<rule ref="rulesets/design.xml/ImmutableField">
+		<priority>3</priority>
+	</rule>
+	<rule ref="rulesets/design.xml/AvoidProtectedFieldInFinalClass">
+		<priority>3</priority>
+	</rule>
+	<rule ref="rulesets/design.xml/AssignmentToNonFinalStatic">
+		<priority>3</priority>
+	</rule>
+	<rule ref="rulesets/design.xml/MissingStaticMethodInNonInstantiatableClass">
+		<priority>3</priority>
+	</rule>
+	<rule ref="rulesets/design.xml/MissingBreakInSwitch">
+		<priority>3</priority>
+	</rule>
+	<rule ref="rulesets/design.xml/UseNotifyAllInsteadOfNotify">
+		<priority>3</priority>
+	</rule>
+	<rule ref="rulesets/design.xml/AvoidInstanceofChecksInCatchClause">
+		<priority>3</priority>
+	</rule>
+	<rule ref="rulesets/design.xml/AbstractClassWithoutAbstractMethod">
+		<priority>3</priority>
+	</rule>
+	<rule ref="rulesets/design.xml/SimplifyConditional">
+		<priority>3</priority>
+	</rule>
+	<rule ref="rulesets/design.xml/CompareObjectsWithEquals">
+		<priority>3</priority>
+	</rule>
+	<rule ref="rulesets/design.xml/PositionLiteralsFirstInComparisons">
+		<priority>4</priority>
+	</rule>
+	<rule ref="rulesets/design.xml/UnnecessaryLocalBeforeReturn">
+		<priority>4</priority>
+	</rule>
+	<rule ref="rulesets/design.xml/NonThreadSafeSingleton">
+		<priority>3</priority>
+	</rule>
+	<rule ref="rulesets/design.xml/UncommentedEmptyMethod">
+		<priority>3</priority>
+	</rule>
+	<rule ref="rulesets/design.xml/UncommentedEmptyConstructor">
+		<priority>3</priority>
+	</rule>
+	<rule ref="rulesets/design.xml/AvoidConstantsInterface">
+		<priority>3</priority>
+	</rule>
+	<rule ref="rulesets/design.xml/UnsynchronizedStaticDateFormatter">
+		<priority>3</priority>
+	</rule>
+	<rule ref="rulesets/design.xml/PreserveStackTrace">
+		<priority>3</priority>
+	</rule>
+	<rule ref="rulesets/design.xml/UseCollectionIsEmpty">
+		<priority>3</priority>
+	</rule>
+	<rule ref="rulesets/design.xml/ClassWithOnlyPrivateConstructorsShouldBeFinal">
+		<priority>1</priority>
+	</rule>
+	<rule ref="rulesets/design.xml/EmptyMethodInAbstractClassShouldBeAbstract">
+		<priority>1</priority>
+	</rule>
+	<rule ref="rulesets/design.xml/SingularField">
+		<priority>3</priority>
+	</rule>
+	<rule ref="rulesets/design.xml/ReturnEmptyArrayRatherThanNull">
+		<priority>1</priority>
+	</rule>
+	<rule ref="rulesets/design.xml/AbstractClassWithoutAnyMethod">
+		<priority>1</priority>
+	</rule>
+
+	<!-- Controversial Rules -->
+	
+	<rule ref="rulesets/controversial.xml/UnnecessaryConstructor">
+		<priority>3</priority>
+	</rule>
+	<rule ref="rulesets/controversial.xml/AssignmentInOperand">
+		<priority>3</priority>
+	</rule>
+	<rule ref="rulesets/controversial.xml/DontImportSun">
+		<priority>2</priority>
+	</rule>
+	<rule ref="rulesets/controversial.xml/SuspiciousOctalEscape">
+		<priority>3</priority>
+	</rule>
+	<rule ref="rulesets/controversial.xml/UnnecessaryParentheses">
+		<priority>4</priority>
+	</rule>
+	<rule ref="rulesets/controversial.xml/AvoidUsingVolatile">
+		<priority>3</priority>
+	</rule>
+	<rule ref="rulesets/controversial.xml/DoNotCallGarbageCollectionExplicitly">
+		<priority>2</priority>
+	</rule>
+
+	<rule ref="rulesets/coupling.xml/CouplingBetweenObjects">
+		<priority>4</priority>
+	</rule>
+	<rule ref="rulesets/coupling.xml/LooseCoupling">
+		<priority>4</priority>
+	</rule>
+
+
+</ruleset>
