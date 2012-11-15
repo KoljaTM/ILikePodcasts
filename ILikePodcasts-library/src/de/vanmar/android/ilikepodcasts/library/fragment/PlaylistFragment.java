@@ -1,6 +1,5 @@
 package de.vanmar.android.ilikepodcasts.library.fragment;
 
-import android.app.Activity;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -36,11 +35,6 @@ public class PlaylistFragment extends Fragment implements
 
 	private PlayListAdapter adapter;
 
-	@Override
-	public void onCreate(final Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-	}
-
 	@AfterViews
 	void afterViews() {
 		final String[] uiBindFrom = { Item.TITLE };
@@ -51,16 +45,6 @@ public class PlaylistFragment extends Fragment implements
 				uiBindTo, 0);
 		playlist.setAdapter(adapter);
 		getLoaderManager().initLoader(PLAYLIST_LOADER, null, this);
-	}
-
-	@Override
-	public void onAttach(final Activity activity) {
-		super.onAttach(activity);
-	}
-
-	@Override
-	public void onStart() {
-		super.onStart();
 	}
 
 	@Override

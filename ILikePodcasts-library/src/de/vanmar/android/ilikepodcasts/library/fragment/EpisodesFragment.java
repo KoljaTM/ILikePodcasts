@@ -1,6 +1,5 @@
 package de.vanmar.android.ilikepodcasts.library.fragment;
 
-import android.app.Activity;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -54,16 +53,6 @@ public class EpisodesFragment extends Fragment implements
 				(EpisodesFragmentListener) getActivity(), null, uiBindFrom,
 				uiBindTo, 0);
 		episodelist.setAdapter(adapter);
-	}
-
-	@Override
-	public void onAttach(final Activity activity) {
-		super.onAttach(activity);
-	}
-
-	@Override
-	public void onStart() {
-		super.onStart();
 	}
 
 	@UiThread

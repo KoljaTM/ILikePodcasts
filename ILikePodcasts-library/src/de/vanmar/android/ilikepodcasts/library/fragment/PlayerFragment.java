@@ -3,7 +3,6 @@ package de.vanmar.android.ilikepodcasts.library.fragment;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
-import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.format.DateFormat;
 import android.view.View;
@@ -64,16 +63,6 @@ public class PlayerFragment extends Fragment {
 		void onSeek(int progress);
 
 		int getTotalDuration();
-	}
-
-	@Override
-	public void onCreate(final Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-	}
-
-	@Override
-	public void onDestroy() {
-		super.onDestroy();
 	}
 
 	@AfterViews

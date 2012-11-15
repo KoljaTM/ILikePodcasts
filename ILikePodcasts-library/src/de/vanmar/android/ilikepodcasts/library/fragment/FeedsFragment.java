@@ -1,6 +1,5 @@
 package de.vanmar.android.ilikepodcasts.library.fragment;
 
-import android.app.Activity;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -37,11 +36,6 @@ public class FeedsFragment extends Fragment implements
 
 	private FeedsListAdapter adapter;
 
-	@Override
-	public void onCreate(final Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-	}
-
 	@AfterViews
 	void afterViews() {
 		final String[] uiBindFrom = { Feed.TITLE };
@@ -52,16 +46,6 @@ public class FeedsFragment extends Fragment implements
 				(FeedsFragmentListener) getActivity(), null, uiBindFrom,
 				uiBindTo, 0);
 		feedlist.setAdapter(adapter);
-	}
-
-	@Override
-	public void onAttach(final Activity activity) {
-		super.onAttach(activity);
-	}
-
-	@Override
-	public void onStart() {
-		super.onStart();
 	}
 
 	@Override

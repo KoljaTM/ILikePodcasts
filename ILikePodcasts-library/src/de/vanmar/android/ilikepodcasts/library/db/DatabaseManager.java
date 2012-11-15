@@ -16,11 +16,11 @@ import com.j256.ormlite.stmt.QueryBuilder;
 import de.vanmar.android.ilikepodcasts.library.bo.Feed;
 import de.vanmar.android.ilikepodcasts.library.bo.Item;
 
-public class DatabaseManager {
+public final class DatabaseManager {
 
-	static private DatabaseManager instance;
+	private static DatabaseManager instance;
 
-	public static void init(final Context ctx) {
+	public static synchronized void init(final Context ctx) {
 		if (null == instance) {
 			instance = new DatabaseManager(ctx);
 		}
@@ -30,11 +30,11 @@ public class DatabaseManager {
 		instance = new DatabaseManager(ctx);
 	}
 
-	static public DatabaseManager getInstance() {
+	public static DatabaseManager getInstance() {
 		return instance;
 	}
 
-	private DatabaseHelper helper;
+	private final DatabaseHelper helper;
 
 	private DatabaseManager(final Context ctx) {
 		helper = new DatabaseHelper(ctx);

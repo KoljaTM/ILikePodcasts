@@ -43,11 +43,7 @@ public class MediaPlayerService extends Service {
 	public static final String EXTRA_ITEM = "de.vanmar.android.ilikepodcasts.mediaplayerservice.location";
 
 	private static final int MEDIAPLAYER_NOTIFICATION = 17;
-	private MediaPlayerServiceBinder myServiceBinder = new MediaPlayerServiceBinder();
-
-	public MediaPlayerService() {
-		super();
-	}
+	private final MediaPlayerServiceBinder myServiceBinder = new MediaPlayerServiceBinder();
 
 	private MediaPlayer mediaPlayer;
 
@@ -112,6 +108,7 @@ public class MediaPlayerService extends Service {
 	public class MediaPlayerServiceBinder extends Binder implements
 			IMediaPlayerService {
 
+		private static final String LOG_TAG = "MediaPlayerService";
 		private final Set<Callback> callbacks = new HashSet<IMediaPlayerService.Callback>();
 
 		@Override
@@ -132,7 +129,7 @@ public class MediaPlayerService extends Service {
 				} else {
 					final Item playPosition = playlistManager.getPlayPosition();
 					if (playPosition != null) {
-						Log.i("MediaPlayerService",
+						Log.i(LOG_TAG,
 								"Play requested: " + playPosition.getTitle()
 										+ playPosition.getPosition());
 						playItem(playPosition);
@@ -145,13 +142,13 @@ public class MediaPlayerService extends Service {
 
 		@Override
 		public void play(final Item item) {
-			Log.i("MediaPlayerService", "Play requested: " + item.getTitle());
+			Log.i(LOG_TAG, "Play requested: " + item.getTitle());
 			playItem(item);
 		}
 
 		@Override
 		public void pause() {
-			Log.i("MediaPlayerService", "Pause requested");
+			Log.i(LOG_TAG, "Pause requested");
 			pausePlayback();
 			for (final Callback callback : callbacks) {
 				callback.playPaused();

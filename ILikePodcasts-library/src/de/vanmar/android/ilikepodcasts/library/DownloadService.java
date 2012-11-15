@@ -21,6 +21,7 @@ import android.os.Binder;
 import android.os.Environment;
 import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
+import android.util.Log;
 
 import com.googlecode.androidannotations.annotations.Background;
 import com.googlecode.androidannotations.annotations.Bean;
@@ -44,7 +45,7 @@ public class DownloadService extends Service {
 	UiHelper uiHelper;
 
 	private static final int DOWNLOAD_NOTIFICATION = 34;
-	private DownloadServiceBinder myServiceBinder = new DownloadServiceBinder();
+	private final DownloadServiceBinder myServiceBinder = new DownloadServiceBinder();
 
 	private final Queue<Item> downloadQueue = new LinkedList<Item>();
 
@@ -75,14 +76,15 @@ public class DownloadService extends Service {
 					+ itemToDownload.getMediaUrl().hashCode() + ".mp3";
 			output = new FileOutputStream(new File(SDCardRoot, filename));
 
-			final byte data[] = new byte[1024];
+			final byte[] data = new byte[1024];
 			int total = 0;
-			int count;
-			while ((count = input.read(data)) != -1) {
+			int count = input.read(data);
+			while (count != -1) {
 				total += count;
 				output.write(data, 0, count);
 				// publishing the progress....
 				publishProgress(itemToDownload, total, fileLength);
+				count = input.read(data);
 			}
 			publishDownloadComplete(itemToDownload);
 			itemToDownload.setMediaPath(filename);
@@ -98,12 +100,16 @@ public class DownloadService extends Service {
 					output.flush();
 					output.close();
 				} catch (final Exception e) {
+					Log.e("DownloadService",
+							"Exception while closing OutputStream", e);
 				}
 			}
 			if (input != null) {
 				try {
 					input.close();
 				} catch (final Exception e) {
+					Log.e("DownloadService",
+							"Exception while closing InputStream", e);
 				}
 			}
 		}

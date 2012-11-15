@@ -15,7 +15,7 @@ public class EpisodeListAdapter extends SimpleCursorAdapter {
 	public static final String[] projection = new String[] { Item.ID,
 			Item.TITLE, Item.MEDIA_PATH };
 
-	private EpisodesFragmentListener handler;
+	private final EpisodesFragmentListener handler;
 
 	private static class ViewHolder {
 		public TextView download;

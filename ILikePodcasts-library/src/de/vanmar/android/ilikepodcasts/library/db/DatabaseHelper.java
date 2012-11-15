@@ -1,8 +1,6 @@
 package de.vanmar.android.ilikepodcasts.library.db;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 
 import android.content.Context;
 import android.database.SQLException;
@@ -54,21 +52,14 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 	public void onUpgrade(final SQLiteDatabase db,
 			final ConnectionSource connectionSource, final int oldVersion,
 			final int newVersion) {
-		try {
-			final List<String> allSql = new ArrayList<String>();
-			switch (oldVersion) {
-			case 1:
-				// allSql.add("alter table Feed add column `url` VARCHAR");
-			}
-			for (final String sql : allSql) {
-				db.execSQL(sql);
-			}
-		} catch (final SQLException e) {
-			Log.e(DatabaseHelper.class.getName(), "exception during onUpgrade",
-					e);
-			throw new RuntimeException(e);
-		}
-
+		/*
+		 * try { final List<String> allSql = new ArrayList<String>(); switch
+		 * (oldVersion) { case 1: //
+		 * allSql.add("alter table Feed add column `url` VARCHAR"); break; } for
+		 * (final String sql : allSql) { db.execSQL(sql); } } catch (final
+		 * SQLException e) { Log.e(DatabaseHelper.class.getName(),
+		 * "exception during onUpgrade", e); throw new RuntimeException(e); }
+		 */
 	}
 
 	public Dao<Feed, Integer> getFeedDao() {

@@ -32,7 +32,7 @@ public class RssLoader {
 	@RootContext
 	Context context;
 
-	private static final DateFormat RSS_DATE_FORMAT = new SimpleDateFormat(
+	private final DateFormat RSS_DATE_FORMAT = new SimpleDateFormat(
 			"EEE, dd MMM yyyy HH:mm:ss zzz", Locale.ENGLISH);
 
 	public void updateFeed(final Feed feed) throws Exception {

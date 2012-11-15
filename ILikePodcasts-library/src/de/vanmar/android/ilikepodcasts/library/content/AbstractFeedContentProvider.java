@@ -11,6 +11,7 @@ import de.vanmar.android.ilikepodcasts.library.db.DatabaseManager;
 
 public abstract class AbstractFeedContentProvider extends ContentProvider {
 
+	private static final String MESSAGE_NOT_YET_IMPLEMENTED = "Not yet implemented!";
 	public static final int FEEDS = 100;
 	public static final int FEED_ID = 110;
 	private static final String FEEDS_BASE_PATH = "feeds";
@@ -41,20 +42,17 @@ public abstract class AbstractFeedContentProvider extends ContentProvider {
 	@Override
 	public int delete(final Uri uri, final String selection,
 			final String[] selectionArgs) {
-		// TODO Auto-generated method stub
-		return 0;
+		throw new IllegalArgumentException(MESSAGE_NOT_YET_IMPLEMENTED);
 	}
 
 	@Override
 	public String getType(final Uri uri) {
-		// TODO Auto-generated method stub
-		return null;
+		throw new IllegalArgumentException(MESSAGE_NOT_YET_IMPLEMENTED);
 	}
 
 	@Override
 	public Uri insert(final Uri uri, final ContentValues values) {
-		// TODO Auto-generated method stub
-		return null;
+		throw new IllegalArgumentException(MESSAGE_NOT_YET_IMPLEMENTED);
 	}
 
 	@Override
@@ -88,8 +86,7 @@ public abstract class AbstractFeedContentProvider extends ContentProvider {
 	@Override
 	public int update(final Uri uri, final ContentValues values,
 			final String selection, final String[] selectionArgs) {
-		// TODO Auto-generated method stub
-		return 0;
+		throw new IllegalArgumentException(MESSAGE_NOT_YET_IMPLEMENTED);
 	}
 
 }

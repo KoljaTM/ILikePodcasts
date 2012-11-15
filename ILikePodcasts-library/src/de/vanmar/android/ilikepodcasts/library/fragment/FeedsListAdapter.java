@@ -14,7 +14,7 @@ public class FeedsListAdapter extends SimpleCursorAdapter {
 	public static final String[] projection = new String[] { Feed.ID,
 			Feed.TITLE };
 
-	private FeedsFragmentListener handler;
+	private final FeedsFragmentListener handler;
 
 	protected FeedsListAdapter(final Activity context,
 			final FeedsFragmentListener handler, final Cursor cursor,
