@@ -68,7 +68,7 @@ public final class DatabaseManager {
 		feedDao.createOrUpdate(feedToSave);
 		for (final Item item : items) {
 			item.setFeed(feedToSave);
-			getHelper().getItemDao().createOrUpdate(item);
+			saveItem(item);
 		}
 	}
 
@@ -79,7 +79,50 @@ public final class DatabaseManager {
 	}
 
 	public void saveItem(final Item item) throws SQLException {
-		getHelper().getItemDao().createOrUpdate(item);
+		final Dao<Item, Integer> itemDao = getHelper().getItemDao();
+		final Item itemToSave = getExistingItem(item, itemDao);
+
+		itemToSave.setDescription(item.getDescription());
+		itemToSave.setTitle(item.getTitle());
+		itemToSave.setUrl(item.getUrl());
+		itemToSave.setMediaUrl(item.getMediaUrl());
+		itemToSave.setMediaType(item.getMediaType());
+		itemToSave.setMediaLength(item.getMediaLength());
+		if (item.getMediaPath() != null) {
+			itemToSave.setMediaPath(item.getMediaPath());
+		}
+		itemToSave.setPublished(item.getPublished());
+
+		itemDao.createOrUpdate(itemToSave);
+	}
+
+	private Item getExistingItem(final Item item,
+			final Dao<Item, Integer> itemDao) throws SQLException {
+		final List<Item> existingItem = itemDao.queryBuilder().limit(1L)
+				.where().eq(Item.URL, item.getUrl()).query();
+		final Item itemToSave;
+		if (existingItem.isEmpty()) {
+			itemToSave = new Item();
+		} else {
+			itemToSave = existingItem.get(0);
+		}
+		return itemToSave;
+	}
+
+	public void saveItemPlayPosition(final Item item, final int position)
+			throws SQLException {
+		final Dao<Item, Integer> itemDao = getHelper().getItemDao();
+		item.setPosition(position);
+
+		itemDao.createOrUpdate(item);
+	}
+
+	public void saveItemPlaylistIndex(final Item item,
+			final Integer playlistIndex) throws SQLException {
+		final Dao<Item, Integer> itemDao = getHelper().getItemDao();
+		item.setPlaylistIndex(playlistIndex);
+
+		itemDao.createOrUpdate(item);
 	}
 
 	public Item getItem(final int itemId) throws SQLException {

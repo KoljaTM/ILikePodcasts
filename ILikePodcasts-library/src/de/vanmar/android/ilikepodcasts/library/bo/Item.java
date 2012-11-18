@@ -31,7 +31,7 @@ public class Item implements Serializable {
 	@DatabaseField(columnName = DESCRIPTION)
 	private String description;
 
-	@DatabaseField(columnName = URL)
+	@DatabaseField(columnName = URL, unique = true)
 	private String url;
 
 	@DatabaseField(columnName = PUBLISHED)

@@ -94,8 +94,7 @@ public class PlaylistManager {
 			lastPlaylistIndex = item.getPlaylistIndex() == null ? 0 : item
 					.getPlaylistIndex();
 			if (removeFromPlaylist) {
-				item.setPlaylistIndex(null);
-				getDbManager().saveItem(item);
+				getDbManager().saveItemPlaylistIndex(item, null);
 				refreshItems();
 			}
 		} else {
@@ -120,7 +119,6 @@ public class PlaylistManager {
 
 	public void savePlayPosition(final Item item, final int position)
 			throws SQLException {
-		item.setPosition(position);
-		getDbManager().saveItem(item);
+		getDbManager().saveItemPlayPosition(item, position);
 	}
 }

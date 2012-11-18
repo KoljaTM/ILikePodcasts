@@ -117,7 +117,7 @@ public class SearchActivity extends FragmentActivity {
 	void setImage(final ImageView imageView, final SearchResultItem item) {
 		Drawable drawable = null;
 		imageView.setTag(item);
-		imageView.setImageDrawable(null);
+		setDrawable(imageView, null, null);
 		if (item.getImage() != null) {
 			// Drawable already loaded
 			drawable = item.getImage();
@@ -146,7 +146,9 @@ public class SearchActivity extends FragmentActivity {
 	@UiThread
 	void setDrawable(final ImageView imageView, final Drawable drawable,
 			final SearchResultItem item) {
-		if (item.equals(imageView.getTag())) {
+		if (drawable == null) {
+			imageView.setImageDrawable(null);
+		} else if (item.equals(imageView.getTag())) {
 			// only set image if Tag is still valid
 			imageView.setImageDrawable(drawable);
 		}
