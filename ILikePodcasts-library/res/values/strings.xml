@@ -23,6 +23,7 @@
     <string name="downloadingNotificationTitle">ILikePodcasts Download</string>
     <string name="downloadingNotificationText">Lade: %s</string>
     <string name="downloadComplete">Vollständig geladen: %s</string>
+    <string name="downloadStatus" formatted="false">Download: %s\n %d/%d</string>
 
     <string name="searchHint">Suchbegriff</string>
     <string name="searchButton">Suche</string>

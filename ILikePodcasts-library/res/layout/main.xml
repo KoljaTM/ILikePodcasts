@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout  xmlns:android="http://schemas.android.com/apk/res/android"
-    	android:orientation="vertical"
-        android:layout_width="match_parent"
-	    android:layout_height="wrap_content">
-	
-		<fragment android:name="de.vanmar.android.ilikepodcasts.library.fragment.PlayerFragment_"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/custom_bg_color"
+    android:orientation="vertical" >
+
+	<fragment android:name="de.vanmar.android.ilikepodcasts.library.fragment.PlayerFragment_"
 	            android:id="@+id/playerFragment"
 	            android:layout_width="match_parent"
 	    	    android:layout_height="wrap_content"/>
@@ -12,7 +13,8 @@
 	<ViewAnimator
 	    android:id="@+id/fragment_container"
 	    android:layout_width="match_parent"
-	    android:layout_height="wrap_content">
+	    android:layout_height="0dp" 
+        android:layout_weight="1">
 	
 	    <fragment
 	        android:id="@+id/feedsFragment"
@@ -29,5 +31,13 @@
 	    	    android:layout_height="wrap_content"/>
 	    
 	</ViewAnimator>
+	
+	<TextView
+	    android:id="@+id/statusBar"
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+	    android:background="@color/status_bar_color"
+	    android:gravity="center"
+	    android:visibility="gone" />
     
 </LinearLayout>

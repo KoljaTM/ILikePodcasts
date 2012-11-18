@@ -10,6 +10,8 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
+import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewAnimator;
 
@@ -57,6 +59,9 @@ public class MainActivity extends FragmentActivity implements
 
 	@ViewById(resName = "fragment_container")
 	protected ViewAnimator fragmentContainer;
+
+	@ViewById(resName = "statusBar")
+	protected TextView statusBar;
 
 	@FragmentById(resName = "feedsFragment")
 	protected FeedsFragment feedsFragment;
@@ -253,16 +258,18 @@ public class MainActivity extends FragmentActivity implements
 	}
 
 	@Override
+	@UiThread
 	public void onDownloadProgress(final Item item, final int progress,
 			final int total) {
-		// Log.i("DownloadService", "downloaded " + progress + " bytes from "
-		// + item.getTitle());
+		statusBar.setVisibility(View.VISIBLE);
+		statusBar.setText(String.format(getString(R.string.downloadStatus),
+				item.getTitle(), progress, total));
 	}
 
 	@Override
 	@UiThread
 	public void onDownloadCompleted(final Item item) {
-		Log.i("DownloadService", "downloaded " + item.getTitle());
+		statusBar.setVisibility(View.GONE);
 		Toast.makeText(this,
 				getString(R.string.downloadComplete, item.getTitle()),
 				Toast.LENGTH_SHORT).show();
