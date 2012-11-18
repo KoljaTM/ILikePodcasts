@@ -175,6 +175,7 @@ public class MainActivity extends FragmentActivity implements
 	}
 
 	@Override
+	@Background
 	public void onItemSelected(final Integer itemId) {
 		try {
 			final Item item = DatabaseManager.getInstance().getItem(itemId);
@@ -196,6 +197,7 @@ public class MainActivity extends FragmentActivity implements
 	}
 
 	@Override
+	@Background
 	public void onItemPlay(final Integer itemId) {
 		try {
 			mpService.play(DatabaseManager.getInstance().getItem(itemId));

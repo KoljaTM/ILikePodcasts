@@ -45,7 +45,9 @@ public class PlaylistManager {
 		Log.i("PlaylistManager", "read: " + playedItemId + "::" + position);
 		if (playedItemId != 0) {
 			final Item item = getDbManager().getItem(playedItemId);
-			item.setPosition(position);
+			if (item != null) {
+				item.setPosition(position);
+			}
 			return item;
 		}
 		return null;
