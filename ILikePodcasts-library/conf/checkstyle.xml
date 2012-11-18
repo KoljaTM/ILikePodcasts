@@ -110,9 +110,6 @@
     <module name="NestedTryDepth">
       <property name="severity" value="warning"/> <!-- 41 -->
     </module>
-    <module name="IllegalCatch">
-      <property name="severity" value="info"/> <!-- 41 -->
-    </module>
     <module name="IllegalThrows">
       <property name="severity" value="info"/> <!-- 41 -->
     </module>
