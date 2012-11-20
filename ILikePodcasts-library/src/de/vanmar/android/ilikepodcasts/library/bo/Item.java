@@ -21,6 +21,7 @@ public class Item implements Serializable {
 	public static final String FEED = "feed_id";
 	public static final String PLAYLIST_INDEX = "playlist_index";
 	public static final String POSITION = "position";
+	public static final String LISTENED = "listened";
 
 	@DatabaseField(generatedId = true, columnName = ID)
 	private int id;
@@ -54,6 +55,9 @@ public class Item implements Serializable {
 
 	@DatabaseField(columnName = POSITION)
 	private int position;
+
+	@DatabaseField(columnName = LISTENED)
+	private boolean listened = false;
 
 	@DatabaseField(foreign = true, foreignAutoRefresh = true, columnName = FEED)
 	private Feed feed;
@@ -152,6 +156,14 @@ public class Item implements Serializable {
 
 	public void setPosition(final int position) {
 		this.position = position;
+	}
+
+	public boolean isListened() {
+		return listened;
+	}
+
+	public void setListened(final boolean listened) {
+		this.listened = listened;
 	}
 
 	@Override
