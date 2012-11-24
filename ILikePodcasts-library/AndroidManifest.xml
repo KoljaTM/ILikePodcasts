@@ -54,6 +54,10 @@
             android:name=".DownloadService_" >
         </service>
         
+        <service
+            android:name=".RssService_" >
+        </service>
+        
     </application>
 
 </manifest>

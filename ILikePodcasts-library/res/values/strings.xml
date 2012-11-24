@@ -33,4 +33,6 @@
     <string name="addFeed">Abonnieren</string>
     <string name="readRssWaitMessage">Podcast wird geladen…</string>
     <string name="saveRssWaitMessage">Podcast wird abonniert</string>
+
+    <string name="updateRssStarted">Podcast wird aktualisiert: %s…</string>
 </resources>

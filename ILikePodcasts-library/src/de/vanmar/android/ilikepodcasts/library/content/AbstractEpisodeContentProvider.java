@@ -72,12 +72,10 @@ public abstract class AbstractEpisodeContentProvider extends ContentProvider {
 	public Cursor query(final Uri uri, final String[] projection,
 			final String selection, final String[] selectionArgs,
 			final String sortOrder) {
-		Log.i("EpContent", "query: " + uri);
 
 		try {
 			final Cursor cursor;
 			final int uriType = sURIMatcher.match(uri);
-			Log.i("EpContent", "uritype: " + uriType);
 			switch (uriType) {
 			case EPISODE_ID:
 				return null;
@@ -98,7 +96,6 @@ public abstract class AbstractEpisodeContentProvider extends ContentProvider {
 				throw new IllegalArgumentException("Unknown URI");
 			}
 			cursor.setNotificationUri(getContext().getContentResolver(), uri);
-			Log.i("EpisodesCP", "cursor " + cursor.getCount());
 
 			return cursor;
 		} catch (final Exception e) {

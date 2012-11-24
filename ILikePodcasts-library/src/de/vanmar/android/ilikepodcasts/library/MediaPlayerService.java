@@ -228,7 +228,6 @@ public class MediaPlayerService extends Service {
 		savePositionInCurrentItem();
 		playing = item;
 		mediaPlayer = getMediaPlayer();
-		Log.w("MediaPlayerService", "playPath; mediaplayer=" + mediaPlayer);
 		mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
 		try {
 			final File SDCardRoot = Environment.getExternalStorageDirectory();
@@ -236,8 +235,6 @@ public class MediaPlayerService extends Service {
 			final FileInputStream inputStream = new FileInputStream(file);
 			mediaPlayer.setDataSource(inputStream.getFD());
 			mediaPlayer.prepare();
-			Log.w("MediaPlayerService",
-					"starting: " + item.getTitle() + item.getPosition());
 			mediaPlayer.seekTo(item.getPosition());
 			startPlay();
 		} catch (final Exception e) {

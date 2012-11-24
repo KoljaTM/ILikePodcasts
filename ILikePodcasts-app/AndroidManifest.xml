@@ -54,6 +54,9 @@
             android:name="de.vanmar.android.ilikepodcasts.library.DownloadService_" >
         </service>
         
+             <service
+            android:name="de.vanmar.android.ilikepodcasts.library.RssService_" >
+        </service>
     </application>
 
 </manifest>

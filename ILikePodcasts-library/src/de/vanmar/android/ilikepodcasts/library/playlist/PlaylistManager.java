@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.preference.PreferenceManager;
-import android.util.Log;
 
 import com.googlecode.androidannotations.annotations.EBean;
 import com.googlecode.androidannotations.annotations.RootContext;
@@ -42,7 +41,6 @@ public class PlaylistManager {
 		final int playedItemId = preferences.getInt(PLAYED_ITEM, 0);
 		final int position = preferences.getInt(PLAY_POSITION, 0);
 
-		Log.i("PlaylistManager", "read: " + playedItemId + "::" + position);
 		if (playedItemId != 0) {
 			final Item item = getDbManager().getItem(playedItemId);
 			if (item != null) {
@@ -115,8 +113,6 @@ public class PlaylistManager {
 		editor.putInt(PLAYED_ITEM, item == null ? 0 : item.getId());
 		editor.putInt(PLAY_POSITION, position);
 		editor.commit();
-		Log.i("PlaylistManager", "save: " + (item == null ? 0 : item.getId())
-				+ "::" + position);
 	}
 
 	public void savePlayPosition(final Item item, final int position)

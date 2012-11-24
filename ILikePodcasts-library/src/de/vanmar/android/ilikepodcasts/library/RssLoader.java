@@ -9,7 +9,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Locale;
 
 import org.xmlpull.v1.XmlPullParser;
@@ -18,7 +17,6 @@ import org.xmlpull.v1.XmlPullParserFactory;
 
 import android.content.Context;
 import android.net.Uri;
-import android.util.Log;
 
 import com.googlecode.androidannotations.annotations.EBean;
 import com.googlecode.androidannotations.annotations.RootContext;
@@ -51,10 +49,8 @@ public class RssLoader {
 		factory.setNamespaceAware(true);
 		final XmlPullParser xpp = factory.newPullParser();
 
-		Log.i("RssLoader", "start: " + url);
 		// We will get the XML from an input stream
 		xpp.setInput(getInputStream(url), "UTF_8");
-		Log.i("RssLoader", "gotInput: " + url);
 
 		boolean insideItem = false;
 
@@ -117,8 +113,6 @@ public class RssLoader {
 			}
 			eventType = xpp.next(); // move to next element
 		}
-		Log.i("RssLoader", String.format("finished parsing: %s; %s items",
-				feed.getTitle(), feed.getItems().size()));
 
 		return feed;
 	}
@@ -129,14 +123,6 @@ public class RssLoader {
 		} catch (final IOException e) {
 			return null;
 		}
-	}
-
-	public void refreshFeeds() throws Exception {
-		final List<Feed> feeds = DatabaseManager.getInstance().getAllFeeds();
-		for (final Feed feed : feeds) {
-			updateFeed(feed);
-		}
-		refreshContentProvider();
 	}
 
 	public void addFeed(final Feed feed) throws SQLException {

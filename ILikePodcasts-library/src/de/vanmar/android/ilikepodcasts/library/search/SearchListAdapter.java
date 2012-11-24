@@ -3,7 +3,6 @@ package de.vanmar.android.ilikepodcasts.library.search;
 import java.util.List;
 
 import android.content.Intent;
-import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -56,10 +55,6 @@ final class SearchListAdapter extends ArrayAdapter<SearchResultItem> {
 		viewHolder.feedName.setText(item.getCollectionName());
 		viewHolder.url.setText(item.getFeedUrl());
 		activity.setImage(viewHolder.image, item);
-		Log.i("Set Image ",
-				convertView == null ? "view: " + view.toString()
-						: "convertView: " + convertView.toString()
-								+ item.getCollectionName());
 
 		view.setOnClickListener(new OnClickListener() {
 

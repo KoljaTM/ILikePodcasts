@@ -125,14 +125,10 @@ public class SearchActivity extends FragmentActivity {
 					imageView.toString() + item.getCollectionName());
 		} else if (item.getArtworkUrl60() != null) {
 			try {
-				Log.i("SearchActivity",
-						item.getCollectionName() + item.getArtworkUrl60());
 				final Drawable drawableFromUrl = Drawable.createFromStream(
 						((InputStream) new URL(item.getArtworkUrl60())
 								.getContent()), getString(R.string.imageDesc));
 				item.setImage(drawableFromUrl);
-				Log.i("Image set",
-						imageView.toString() + item.getCollectionName());
 				drawable = drawableFromUrl;
 			} catch (final Exception e) {
 				Log.w("SearchActivity", "Error loading drawable from " + item,

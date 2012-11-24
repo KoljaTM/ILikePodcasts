@@ -1,6 +1,7 @@
 package de.vanmar.android.ilikepodcasts.library;
 
 import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
@@ -74,7 +75,8 @@ public class DownloadService extends Service {
 			final String filename = ILikePodcastsApplication.FILE_DIR
 					+ File.separator + FILE_PREFIX
 					+ itemToDownload.getMediaUrl().hashCode() + ".mp3";
-			output = new FileOutputStream(new File(SDCardRoot, filename));
+			output = new BufferedOutputStream(new FileOutputStream(new File(
+					SDCardRoot, filename)), 8192);
 
 			final byte[] data = new byte[1024];
 			int total = 0;

@@ -50,7 +50,6 @@ public class DatabaseManager {
 
 	public void saveFeed(final Feed feed, final Collection<Item> items)
 			throws SQLException {
-		Log.i("DatabaseManager", "saveFeed: " + feed.getTitle());
 		final Dao<Feed, Integer> feedDao = getHelper().getFeedDao();
 		final List<Feed> existingFeed = feedDao.queryBuilder().limit(1L)
 				.where().eq(Feed.URL, feed.getUrl()).query();

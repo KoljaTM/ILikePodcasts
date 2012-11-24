@@ -24,6 +24,8 @@ import com.googlecode.androidannotations.annotations.OptionsMenu;
 import com.googlecode.androidannotations.annotations.UiThread;
 import com.googlecode.androidannotations.annotations.ViewById;
 
+import de.vanmar.android.ilikepodcasts.library.IRssService.Callback;
+import de.vanmar.android.ilikepodcasts.library.bo.Feed;
 import de.vanmar.android.ilikepodcasts.library.bo.Item;
 import de.vanmar.android.ilikepodcasts.library.db.DatabaseManager;
 import de.vanmar.android.ilikepodcasts.library.fragment.EpisodesFragment;
@@ -42,14 +44,15 @@ import de.vanmar.android.ilikepodcasts.library.util.UiHelper;
 public class MainActivity extends FragmentActivity implements
 		FeedsFragmentListener, EpisodesFragmentListener,
 		PlaylistFragmentListener, PlayerFragmentListener,
-		IMediaPlayerService.Callback, IDownloadService.Callback {
+		IMediaPlayerService.Callback, IDownloadService.Callback, Callback {
 
 	private static final int CHILD_FEED_FRAGMENT = 0;
 	private static final int CHILD_EPISODES_FRAGMENT = 1;
 	private static final int CHILD_PLAYLIST_FRAGMENT = 2;
 
-	@Bean
-	protected RssLoader rssLoader;
+	private static final long PROGRESS_UPDATE_INTERVAL = 500;
+
+	private long lastProgressUpdate = System.currentTimeMillis();
 
 	@Bean
 	protected UiHelper uiHelper;
@@ -78,12 +81,43 @@ public class MainActivity extends FragmentActivity implements
 	private ServiceConnection dlServiceConnection;
 	private IDownloadService dlService;
 
+	private ServiceConnection rssServiceConnection;
+	private IRssService rssService;
+
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		DatabaseManager.init(this);
 
-		// Bind to MediaPlayerService
+		bindMediaplayerService();
+		bindDownloadService();
+		bindRssService();
+	}
+
+	private void bindDownloadService() {
+		dlServiceConnection = new ServiceConnection() {
+
+			@Override
+			public void onServiceDisconnected(final ComponentName name) {
+				dlService.unRegisterCallback(MainActivity.this);
+				dlService = null;
+			}
+
+			@Override
+			public void onServiceConnected(final ComponentName name,
+					final IBinder service) {
+				dlService = (IDownloadService) service;
+				dlService.registerCallback(MainActivity.this);
+				playerFragment.setPlayerStatus(mpService.getPlayerStatus());
+				Log.i("INFO", "DownloadService bound ");
+			}
+		};
+		final Intent dlServiceIntent = new Intent(this, DownloadService_.class);
+		bindService(dlServiceIntent, dlServiceConnection,
+				Context.BIND_AUTO_CREATE);
+	}
+
+	private void bindMediaplayerService() {
 		mpServiceConnection = new ServiceConnection() {
 
 			@Override
@@ -105,35 +139,35 @@ public class MainActivity extends FragmentActivity implements
 				MediaPlayerService_.class);
 		bindService(mpServiceIntent, mpServiceConnection,
 				Context.BIND_AUTO_CREATE);
+	}
 
-		// Bind to DownloadService
-		dlServiceConnection = new ServiceConnection() {
+	private void bindRssService() {
+		rssServiceConnection = new ServiceConnection() {
 
 			@Override
 			public void onServiceDisconnected(final ComponentName name) {
-				dlService.unRegisterCallback(MainActivity.this);
-				dlService = null;
+				rssService.unRegisterCallback(MainActivity.this);
+				rssService = null;
 			}
 
 			@Override
 			public void onServiceConnected(final ComponentName name,
 					final IBinder service) {
-				dlService = (IDownloadService) service;
-				dlService.registerCallback(MainActivity.this);
-				playerFragment.setPlayerStatus(mpService.getPlayerStatus());
-				Log.i("INFO", "DownloadService bound ");
+				rssService = (IRssService) service;
+				rssService.registerCallback(MainActivity.this);
+				Log.i("INFO", "RssService bound ");
 			}
 		};
-		final Intent dlServiceIntent = new Intent(this, DownloadService_.class);
-		bindService(dlServiceIntent, dlServiceConnection,
+		final Intent rssServiceIntent = new Intent(this, RssService_.class);
+		bindService(rssServiceIntent, rssServiceConnection,
 				Context.BIND_AUTO_CREATE);
-
 	}
 
 	@Override
 	protected void onDestroy() {
 		unbindService(mpServiceConnection);
 		unbindService(dlServiceConnection);
+		unbindService(rssServiceConnection);
 		super.onDestroy();
 	}
 
@@ -141,7 +175,9 @@ public class MainActivity extends FragmentActivity implements
 	@Background
 	protected void doRefresh() {
 		try {
-			rssLoader.refreshFeeds();
+			if (rssService != null) {
+				rssService.updateFeeds();
+			}
 		} catch (final Exception e) {
 			uiHelper.displayError(e);
 		}
@@ -208,7 +244,6 @@ public class MainActivity extends FragmentActivity implements
 
 	@Override
 	public void playStarted(final Item item, final int totalDuration) {
-		Log.i("MainActivity", "Play has started");
 		playerFragment.onPlayStarted(item, totalDuration);
 	}
 
@@ -219,13 +254,11 @@ public class MainActivity extends FragmentActivity implements
 
 	@Override
 	public void playPaused() {
-		Log.i("MainActivity", "Play was paused");
 		playerFragment.onPaused();
 	}
 
 	@Override
 	public void playStopped() {
-		Log.i("MainActivity", "Play was stopped");
 		playerFragment.onStopped();
 	}
 
@@ -263,7 +296,15 @@ public class MainActivity extends FragmentActivity implements
 	@UiThread
 	public void onDownloadProgress(final Item item, final int progress,
 			final int total) {
-		statusBar.setVisibility(View.VISIBLE);
+		if (System.currentTimeMillis() - lastProgressUpdate < PROGRESS_UPDATE_INTERVAL) {
+			// don't update too often
+			return;
+		}
+		lastProgressUpdate = System.currentTimeMillis();
+
+		if (statusBar.getVisibility() != View.VISIBLE) {
+			statusBar.setVisibility(View.VISIBLE);
+		}
 		statusBar.setText(String.format(getString(R.string.downloadStatus),
 				item.getTitle(), progress, total));
 	}
@@ -275,5 +316,19 @@ public class MainActivity extends FragmentActivity implements
 		Toast.makeText(this,
 				getString(R.string.downloadComplete, item.getTitle()),
 				Toast.LENGTH_SHORT).show();
+	}
+
+	@Override
+	@UiThread
+	public void onFeedUpdateStarted(final Feed feed) {
+		statusBar.setVisibility(View.VISIBLE);
+		statusBar
+				.setText(getString(R.string.updateRssStarted, feed.getTitle()));
+	}
+
+	@Override
+	@UiThread
+	public void onFeedUpdateCompleted(final Feed feed) {
+		statusBar.setVisibility(View.GONE);
 	}
 }
