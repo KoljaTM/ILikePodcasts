@@ -18,6 +18,7 @@ import org.xmlpull.v1.XmlPullParserFactory;
 
 import android.content.Context;
 import android.net.Uri;
+import android.util.Log;
 
 import com.googlecode.androidannotations.annotations.EBean;
 import com.googlecode.androidannotations.annotations.RootContext;
@@ -50,8 +51,10 @@ public class RssLoader {
 		factory.setNamespaceAware(true);
 		final XmlPullParser xpp = factory.newPullParser();
 
+		Log.i("RssLoader", "start: " + url);
 		// We will get the XML from an input stream
 		xpp.setInput(getInputStream(url), "UTF_8");
+		Log.i("RssLoader", "gotInput: " + url);
 
 		boolean insideItem = false;
 
@@ -106,7 +109,7 @@ public class RssLoader {
 				}
 			} else if (eventType == XmlPullParser.END_TAG
 					&& xpp.getName().equalsIgnoreCase("item")) {
-				if (item.getMediaUrl() != null) {
+				if (item.getUrl() != null && item.getMediaUrl() != null) {
 					feed.getItems().add(item);
 				}
 				item = null;
@@ -114,6 +117,8 @@ public class RssLoader {
 			}
 			eventType = xpp.next(); // move to next element
 		}
+		Log.i("RssLoader", "finished parsing: " + url);
+
 		return feed;
 	}
 

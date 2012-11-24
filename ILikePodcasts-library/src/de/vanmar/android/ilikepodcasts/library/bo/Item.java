@@ -4,7 +4,11 @@ import java.io.Serializable;
 import java.util.Date;
 
 import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.table.DatabaseTable;
 
+import de.vanmar.android.ilikepodcasts.library.db.ItemDao;
+
+@DatabaseTable(daoClass = ItemDao.class)
 public class Item implements Serializable {
 
 	private static final long serialVersionUID = 8617289772343323484L;

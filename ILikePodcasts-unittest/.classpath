@@ -2,5 +2,14 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7"/>
+	<classpathentry kind="lib" path="lib/mockito-all-1.9.5.jar"/>
+	<classpathentry kind="lib" path="lib/robolectric-1.2-20121021.181804-150-jar-with-dependencies.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/ILikePodcasts-library"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/ILikePodcasts-test"/>
+	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.LIBRARIES"/>
+	<classpathentry kind="lib" path="C:/Users/Kolja/android-sdks/platforms/android-8/android.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
+	<classpathentry kind="lib" path="C:/Users/Kolja/android-sdks/add-ons/addon-google_apis-google-16/libs/maps.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Kolja/android-sdks/extras/android/support/v4/android-support-v4.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

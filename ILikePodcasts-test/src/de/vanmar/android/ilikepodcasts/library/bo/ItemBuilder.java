@@ -34,7 +34,7 @@ public class ItemBuilder {
 		return result;
 	}
 
-	public static ItemBuilder aItem() {
+	public static ItemBuilder anItem() {
 		return new ItemBuilder();
 	}
 

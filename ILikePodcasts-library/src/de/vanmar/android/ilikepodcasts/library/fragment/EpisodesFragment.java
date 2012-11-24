@@ -7,6 +7,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.util.Log;
 import android.widget.ListView;
 
 import com.googlecode.androidannotations.annotations.AfterViews;
@@ -58,11 +59,13 @@ public class EpisodesFragment extends Fragment implements
 	@UiThread
 	public void onFeedSelected(final Integer feedId) {
 		this.feedId = feedId;
+		Log.i("EpisodesFragment", "onFeedSelected");
 		getLoaderManager().restartLoader(EPISODE_LIST_LOADER, null, this);
 	}
 
 	@Override
 	public Loader<Cursor> onCreateLoader(final int id, final Bundle args) {
+		Log.i("EpisodesFragment", "onCreateLoader " + feedId);
 		if (feedId != null) {
 			return new CursorLoader(getActivity(), Uri.withAppendedPath(
 					Uri.parse(getString(R.string.episodeContentProviderUri)),
@@ -77,6 +80,7 @@ public class EpisodesFragment extends Fragment implements
 
 	@Override
 	public void onLoadFinished(final Loader<Cursor> loader, final Cursor cursor) {
+		Log.i("EpisodesFragment", "onLoadFinished");
 		adapter.swapCursor(cursor);
 	}
 

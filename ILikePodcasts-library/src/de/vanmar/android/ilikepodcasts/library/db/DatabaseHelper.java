@@ -10,6 +10,7 @@ import android.util.Log;
 
 import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
 import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
 
@@ -25,7 +26,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 	private static final int DATABASE_VERSION = 1;
 
 	private Dao<Feed, Integer> feedDao = null;
-	private Dao<Item, Integer> itemDao = null;
+	private IItemDao itemDao = null;
 
 	public DatabaseHelper(final Context context) {
 		super(context, Environment.getExternalStorageDirectory()
@@ -73,10 +74,11 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 		return feedDao;
 	}
 
-	public Dao<Item, Integer> getItemDao() {
+	public IItemDao getItemDao() {
 		if (null == itemDao) {
 			try {
-				itemDao = getDao(Item.class);
+				itemDao = DaoManager.createDao(getConnectionSource(),
+						Item.class);
 			} catch (final java.sql.SQLException e) {
 				e.printStackTrace();
 			}

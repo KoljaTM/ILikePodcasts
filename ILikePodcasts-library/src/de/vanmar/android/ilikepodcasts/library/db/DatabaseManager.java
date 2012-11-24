@@ -16,7 +16,7 @@ import com.j256.ormlite.stmt.QueryBuilder;
 import de.vanmar.android.ilikepodcasts.library.bo.Feed;
 import de.vanmar.android.ilikepodcasts.library.bo.Item;
 
-public final class DatabaseManager {
+public class DatabaseManager {
 
 	private static DatabaseManager instance;
 
@@ -36,11 +36,11 @@ public final class DatabaseManager {
 
 	private final DatabaseHelper helper;
 
-	private DatabaseManager(final Context ctx) {
+	protected DatabaseManager(final Context ctx) {
 		helper = new DatabaseHelper(ctx);
 	}
 
-	private DatabaseHelper getHelper() {
+	protected DatabaseHelper getHelper() {
 		return helper;
 	}
 
@@ -50,6 +50,7 @@ public final class DatabaseManager {
 
 	public void saveFeed(final Feed feed, final Collection<Item> items)
 			throws SQLException {
+		Log.i("DatabaseManager", "saveFeed: " + feed.getTitle());
 		final Dao<Feed, Integer> feedDao = getHelper().getFeedDao();
 		final List<Feed> existingFeed = feedDao.queryBuilder().limit(1L)
 				.where().eq(Feed.URL, feed.getUrl()).query();
@@ -79,9 +80,10 @@ public final class DatabaseManager {
 	}
 
 	public void saveItem(final Item item) throws SQLException {
-		final Dao<Item, Integer> itemDao = getHelper().getItemDao();
-		final Item itemToSave = getExistingItem(item, itemDao);
+		final IItemDao itemDao = getHelper().getItemDao();
+		final Item itemToSave = itemDao.getExistingItem(item);
 
+		itemToSave.setFeed(item.getFeed());
 		itemToSave.setDescription(item.getDescription());
 		itemToSave.setTitle(item.getTitle());
 		itemToSave.setUrl(item.getUrl());
@@ -94,19 +96,6 @@ public final class DatabaseManager {
 		itemToSave.setPublished(item.getPublished());
 
 		itemDao.createOrUpdate(itemToSave);
-	}
-
-	private Item getExistingItem(final Item item,
-			final Dao<Item, Integer> itemDao) throws SQLException {
-		final List<Item> existingItem = itemDao.queryBuilder().limit(1L)
-				.where().eq(Item.URL, item.getUrl()).query();
-		final Item itemToSave;
-		if (existingItem.isEmpty()) {
-			itemToSave = new Item();
-		} else {
-			itemToSave = existingItem.get(0);
-		}
-		return itemToSave;
 	}
 
 	public void saveItemPlayPosition(final Item item, final int position)
