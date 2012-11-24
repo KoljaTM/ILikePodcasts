@@ -36,13 +36,13 @@ public class Item implements Serializable {
 	@DatabaseField(columnName = DESCRIPTION)
 	private String description;
 
-	@DatabaseField(columnName = URL, unique = true)
+	@DatabaseField(columnName = URL)
 	private String url;
 
 	@DatabaseField(columnName = PUBLISHED)
 	private Date published;
 
-	@DatabaseField(columnName = MEDIA_URL)
+	@DatabaseField(columnName = MEDIA_URL, unique = true)
 	private String mediaUrl;
 
 	@DatabaseField(columnName = MEDIA_LENGTH)

@@ -109,7 +109,7 @@ public class RssLoader {
 				}
 			} else if (eventType == XmlPullParser.END_TAG
 					&& xpp.getName().equalsIgnoreCase("item")) {
-				if (item.getUrl() != null && item.getMediaUrl() != null) {
+				if (item.getMediaUrl() != null) {
 					feed.getItems().add(item);
 				}
 				item = null;
@@ -117,7 +117,8 @@ public class RssLoader {
 			}
 			eventType = xpp.next(); // move to next element
 		}
-		Log.i("RssLoader", "finished parsing: " + url);
+		Log.i("RssLoader", String.format("finished parsing: %s; %s items",
+				feed.getTitle(), feed.getItems().size()));
 
 		return feed;
 	}

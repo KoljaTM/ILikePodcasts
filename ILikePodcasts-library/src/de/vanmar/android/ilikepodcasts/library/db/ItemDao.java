@@ -17,7 +17,7 @@ public class ItemDao extends BaseDaoImpl<Item, Integer> implements IItemDao {
 	@Override
 	public Item getExistingItem(final Item item) throws SQLException {
 		final List<Item> existingItems = queryBuilder().limit(1L).where()
-				.eq(Item.URL, item.getUrl()).query();
+				.eq(Item.URL, item.getMediaUrl()).query();
 		final Item existingItem;
 		if (existingItems.isEmpty()) {
 			existingItem = new Item();
