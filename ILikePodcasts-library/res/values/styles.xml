@@ -1,6 +1,8 @@
 <resources>
     <color name="custom_bg_color">#FFCFDEFC</color>
     <color name="status_bar_color">#FFFCFCCF</color>
+    <color name="listitem_bg_color">#FFFFFFFF</color>
+    <color name="listitem_active_color">#FFFCFCCF</color>
     <style name="PodcastTheme" parent="android:Theme.Light">
 	    <item name="android:windowBackground">@color/custom_bg_color</item>
 	    <item name="android:colorBackground">@color/custom_bg_color</item>
