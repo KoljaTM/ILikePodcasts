@@ -185,7 +185,7 @@ public class MainActivity extends FragmentActivity implements
 
 	@OptionsItem(resName = "playlist")
 	protected void doPlaylist() {
-		fragmentContainer.setDisplayedChild(CHILD_PLAYLIST_FRAGMENT);
+		displayPlaylist();
 	}
 
 	@OptionsItem(resName = "search")
@@ -218,12 +218,17 @@ public class MainActivity extends FragmentActivity implements
 			if (item.getMediaPath() == null) {
 				startDownload(item);
 			} else {
+				displayPlaylist();
 				playlistManager.enqueueItem(item);
-				fragmentContainer.setDisplayedChild(CHILD_PLAYLIST_FRAGMENT);
 			}
 		} catch (final SQLException e) {
 			uiHelper.displayError(e);
 		}
+	}
+
+	@UiThread
+	public void displayPlaylist() {
+		fragmentContainer.setDisplayedChild(CHILD_PLAYLIST_FRAGMENT);
 	}
 
 	protected void startDownload(final Item item) {
