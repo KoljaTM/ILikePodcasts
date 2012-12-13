@@ -51,25 +51,9 @@ public class MediaPlayerService extends Service {
 
 		@Override
 		public void onCompletion(final MediaPlayer mp) {
-			mp.release();
-			mediaPlayer = null;
-			try {
-				playing = playlistManager.getNextItem(playing, true);
-				if (playing == null) {
-					savePlayPosition();
-					stopForeground();
-					for (final Callback callback : myServiceBinder.callbacks) {
-						callback.playStopped();
-					}
-					stopSelf();
-				} else {
-					playItem(playing);
-				}
-			} catch (final SQLException e) {
-				cleanup();
-				uiHelper.displayError(e);
-			}
+			doOnItemCompleted();
 		}
+
 	};
 
 	public Item playing;
@@ -232,12 +216,41 @@ public class MediaPlayerService extends Service {
 		try {
 			final File SDCardRoot = Environment.getExternalStorageDirectory();
 			final File file = new File(SDCardRoot, playing.getMediaPath());
+			if (!file.exists()) {
+				doOnFileNotExisting();
+				return;
+			}
 			final FileInputStream inputStream = new FileInputStream(file);
 			mediaPlayer.setDataSource(inputStream.getFD());
 			mediaPlayer.prepare();
 			mediaPlayer.seekTo(item.getPosition());
 			startPlay();
 		} catch (final Exception e) {
+			cleanup();
+			uiHelper.displayError(e);
+		}
+	}
+
+	private void doOnFileNotExisting() {
+		doOnItemCompleted();
+	}
+
+	private void doOnItemCompleted() {
+		mediaPlayer.release();
+		mediaPlayer = null;
+		try {
+			playing = playlistManager.getNextItem(playing, true);
+			if (playing == null) {
+				savePlayPosition();
+				stopForeground();
+				for (final Callback callback : myServiceBinder.callbacks) {
+					callback.playStopped();
+				}
+				stopSelf();
+			} else {
+				playItem(playing);
+			}
+		} catch (final SQLException e) {
 			cleanup();
 			uiHelper.displayError(e);
 		}

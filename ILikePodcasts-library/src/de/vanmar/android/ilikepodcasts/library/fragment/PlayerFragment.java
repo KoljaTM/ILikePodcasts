@@ -97,6 +97,7 @@ public class PlayerFragment extends Fragment {
 		listener.onPlaySelected();
 	}
 
+	@UiThread
 	public void onPlayStarted(final Item item, final int totalDuration) {
 		playButton.setVisibility(View.GONE);
 		pauseButton.setVisibility(View.VISIBLE);
