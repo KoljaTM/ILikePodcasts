@@ -63,6 +63,9 @@ public class EpisodesFragment extends Fragment implements
 
 	@Override
 	public Loader<Cursor> onCreateLoader(final int id, final Bundle args) {
+		if (adapter != null) {
+			adapter.swapCursor(null);
+		}
 		if (feedId != null) {
 			return new CursorLoader(getActivity(), Uri.withAppendedPath(
 					Uri.parse(getString(R.string.episodeContentProviderUri)),

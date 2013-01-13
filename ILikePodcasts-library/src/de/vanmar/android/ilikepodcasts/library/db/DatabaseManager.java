@@ -11,6 +11,7 @@ import android.util.Log;
 import com.j256.ormlite.android.AndroidDatabaseResults;
 import com.j256.ormlite.dao.CloseableIterator;
 import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.dao.Dao.CreateOrUpdateStatus;
 import com.j256.ormlite.stmt.QueryBuilder;
 
 import de.vanmar.android.ilikepodcasts.library.bo.Feed;
@@ -68,7 +69,10 @@ public class DatabaseManager {
 		feedDao.createOrUpdate(feedToSave);
 		for (final Item item : items) {
 			item.setFeed(feedToSave);
-			saveItem(item);
+			final CreateOrUpdateStatus saveOrUpdateStatus = saveItem(item);
+			if (saveOrUpdateStatus.isUpdated()) {
+				break;
+			}
 		}
 	}
 
@@ -78,7 +82,7 @@ public class DatabaseManager {
 				.query();
 	}
 
-	public void saveItem(final Item item) throws SQLException {
+	public CreateOrUpdateStatus saveItem(final Item item) throws SQLException {
 		final IItemDao itemDao = getHelper().getItemDao();
 		final Item itemToSave = itemDao.getExistingItem(item);
 
@@ -94,7 +98,7 @@ public class DatabaseManager {
 		}
 		itemToSave.setPublished(item.getPublished());
 
-		itemDao.createOrUpdate(itemToSave);
+		return itemDao.createOrUpdate(itemToSave);
 	}
 
 	public void saveItemPlayPosition(final Item item, final int position)
