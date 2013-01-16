@@ -31,6 +31,7 @@ import com.googlecode.androidannotations.annotations.EService;
 import de.vanmar.android.ilikepodcasts.library.IDownloadService.Callback;
 import de.vanmar.android.ilikepodcasts.library.bo.Item;
 import de.vanmar.android.ilikepodcasts.library.db.DatabaseManager;
+import de.vanmar.android.ilikepodcasts.library.playlist.PlaylistManager;
 import de.vanmar.android.ilikepodcasts.library.util.UiHelper;
 
 @EService
@@ -47,6 +48,9 @@ public class DownloadService extends Service {
 
 	@Bean
 	DatabaseManager dbManager;
+
+	@Bean
+	PlaylistManager playlistManager;
 
 	private static final int DOWNLOAD_NOTIFICATION = 34;
 	private final DownloadServiceBinder myServiceBinder = new DownloadServiceBinder();
@@ -94,6 +98,7 @@ public class DownloadService extends Service {
 			publishDownloadComplete(itemToDownload);
 			itemToDownload.setMediaPath(filename);
 			dbManager.saveItem(itemToDownload);
+			playlistManager.enqueueItem(itemToDownload);
 			getContentResolver().notifyChange(
 					Uri.parse(getString(R.string.episodeContentProviderUri)),
 					null);
