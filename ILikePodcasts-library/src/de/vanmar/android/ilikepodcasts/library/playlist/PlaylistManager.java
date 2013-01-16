@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.preference.PreferenceManager;
 
+import com.googlecode.androidannotations.annotations.Bean;
 import com.googlecode.androidannotations.annotations.EBean;
 import com.googlecode.androidannotations.annotations.RootContext;
 
@@ -24,7 +25,8 @@ public class PlaylistManager {
 	@RootContext
 	Context context;
 
-	private DatabaseManager dbManager;
+	@Bean
+	DatabaseManager dbManager;
 
 	public Item getPlayPosition() throws SQLException {
 		final Item playing = getPlayPositionFromPrefs();
@@ -32,7 +34,7 @@ public class PlaylistManager {
 		if (playing != null) {
 			return playing;
 		}
-		return getDbManager().getNextItemInPlaylist(0);
+		return dbManager.getNextItemInPlaylist(0);
 	}
 
 	private Item getPlayPositionFromPrefs() throws SQLException {
@@ -42,7 +44,7 @@ public class PlaylistManager {
 		final int position = preferences.getInt(PLAY_POSITION, 0);
 
 		if (playedItemId != 0) {
-			final Item item = getDbManager().getItem(playedItemId);
+			final Item item = dbManager.getItem(playedItemId);
 			if (item != null) {
 				item.setPosition(position);
 			}
@@ -51,19 +53,11 @@ public class PlaylistManager {
 		return null;
 	}
 
-	private DatabaseManager getDbManager() {
-		if (dbManager == null) {
-			DatabaseManager.init(context);
-			dbManager = DatabaseManager.getInstance();
-		}
-		return dbManager;
-	}
-
 	/**
 	 * Enqueues the item into the playlist. Does not start play.
 	 */
 	public void enqueueItem(final Item item) throws SQLException {
-		getDbManager().enqueueItem(item);
+		dbManager.enqueueItem(item);
 		refreshItems();
 	}
 
@@ -82,7 +76,7 @@ public class PlaylistManager {
 		} else {
 			lastPlaylistIndex = item.getPlaylistIndex();
 		}
-		final Item previousItemInPlaylist = getDbManager()
+		final Item previousItemInPlaylist = dbManager
 				.getPreviousItemInPlaylist(lastPlaylistIndex);
 		return previousItemInPlaylist;
 	}
@@ -94,14 +88,14 @@ public class PlaylistManager {
 			lastPlaylistIndex = item.getPlaylistIndex() == null ? 0 : item
 					.getPlaylistIndex();
 			if (removeFromPlaylist) {
-				getDbManager().saveItemPlaylistIndex(item, null);
+				dbManager.saveItemPlaylistIndex(item, null);
 				refreshItems();
 			}
 		} else {
 			lastPlaylistIndex = 0;
 		}
-		final Item nextItemInPlaylist = getDbManager().getNextItemInPlaylist(
-				lastPlaylistIndex);
+		final Item nextItemInPlaylist = dbManager
+				.getNextItemInPlaylist(lastPlaylistIndex);
 
 		return nextItemInPlaylist;
 	}
@@ -117,6 +111,6 @@ public class PlaylistManager {
 
 	public void savePlayPosition(final Item item, final int position)
 			throws SQLException {
-		getDbManager().saveItemPlayPosition(item, position);
+		dbManager.saveItemPlayPosition(item, position);
 	}
 }

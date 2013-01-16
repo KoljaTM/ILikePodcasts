@@ -8,6 +8,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.util.Log;
 import de.vanmar.android.ilikepodcasts.library.db.DatabaseManager;
+import de.vanmar.android.ilikepodcasts.library.db.DatabaseManager_;
 
 public abstract class AbstractFeedContentProvider extends ContentProvider {
 
@@ -34,8 +35,7 @@ public abstract class AbstractFeedContentProvider extends ContentProvider {
 
 	@Override
 	public boolean onCreate() {
-		DatabaseManager.init(getContext());
-		dbManager = DatabaseManager.getInstance();
+		dbManager = DatabaseManager_.getInstance_(getContext());
 		return true;
 	}
 

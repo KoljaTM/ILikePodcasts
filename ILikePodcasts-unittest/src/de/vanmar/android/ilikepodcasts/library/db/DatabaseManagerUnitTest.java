@@ -43,8 +43,8 @@ public class DatabaseManagerUnitTest {
 	public void setUp() throws SQLException {
 		MockitoAnnotations.initMocks(this);
 
-		DatabaseManager.init(context);
-		databaseManager = spy(DatabaseManager.getInstance());
+		databaseManager = spy(new DatabaseManager());
+		databaseManager.context = context;
 		BDDMockito.willReturn(dbHelper).given(databaseManager).getHelper();
 		given(dbHelper.getItemDao()).willReturn(itemDao);
 	}

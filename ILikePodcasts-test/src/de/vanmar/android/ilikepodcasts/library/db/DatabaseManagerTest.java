@@ -25,18 +25,19 @@ public class DatabaseManagerTest extends AndroidTestCase {
 		final File basePath = new File(TESTDATA_DIR);
 		basePath.mkdirs();
 		context = new RenamingDelegatingContext(getContext(), TEST_FILE_PREFIX);
-		DatabaseManager.forceInit(context);
 	}
 
 	public void testDefaultData() throws SQLException {
-		final DatabaseManager dbManager = DatabaseManager.getInstance();
+		final DatabaseManager dbManager = DatabaseManager_
+				.getInstance_(context);
 
 		assertEquals(0, dbManager.getAllFeeds().size());
 		assertTrue(dbManager.getItemsAsCursor(new String[] {}).isAfterLast());
 	}
 
 	public void testSaveFeed() throws SQLException {
-		final DatabaseManager dbManager = DatabaseManager.getInstance();
+		final DatabaseManager dbManager = DatabaseManager_
+				.getInstance_(context);
 
 		final int feedsBefore = dbManager.getAllFeeds().size();
 		dbManager.saveFeed(FeedBuilder.aFeed().build(), new LinkedList<Item>());

@@ -18,6 +18,7 @@ import org.xmlpull.v1.XmlPullParserFactory;
 import android.content.Context;
 import android.net.Uri;
 
+import com.googlecode.androidannotations.annotations.Bean;
 import com.googlecode.androidannotations.annotations.EBean;
 import com.googlecode.androidannotations.annotations.RootContext;
 
@@ -31,13 +32,15 @@ public class RssLoader {
 	@RootContext
 	Context context;
 
+	@Bean
+	DatabaseManager dbManager;
+
 	private final DateFormat RSS_DATE_FORMAT = new SimpleDateFormat(
 			"EEE, dd MMM yyyy HH:mm:ss zzz", Locale.ENGLISH);
 
 	public void updateFeed(final Feed feed) throws Exception {
 		final Feed updatedFeed = readRssFeed(new URL(feed.getUrl()));
-		DatabaseManager.getInstance().saveFeed(updatedFeed,
-				updatedFeed.getItems());
+		dbManager.saveFeed(updatedFeed, updatedFeed.getItems());
 	}
 
 	public Feed readRssFeed(final URL url) throws XmlPullParserException,
@@ -126,7 +129,7 @@ public class RssLoader {
 	}
 
 	public void addFeed(final Feed feed) throws SQLException {
-		DatabaseManager.getInstance().saveFeed(feed, feed.getItems());
+		dbManager.saveFeed(feed, feed.getItems());
 		refreshContentProvider();
 	}
 

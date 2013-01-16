@@ -27,6 +27,9 @@ public class RssService extends Service {
 	@Bean
 	RssLoader rssLoader;
 
+	@Bean
+	DatabaseManager dbManager;
+
 	private final RssServiceBinder myServiceBinder = new RssServiceBinder();
 
 	@Override
@@ -67,7 +70,7 @@ public class RssService extends Service {
 	}
 
 	public void refreshFeeds() throws Exception {
-		final List<Feed> feeds = DatabaseManager.getInstance().getAllFeeds();
+		final List<Feed> feeds = dbManager.getAllFeeds();
 		for (final Feed feed : feeds) {
 			publishFeedUpdateStarted(feed);
 			rssLoader.updateFeed(feed);

@@ -8,6 +8,9 @@ import android.content.Context;
 import android.database.Cursor;
 import android.util.Log;
 
+import com.googlecode.androidannotations.annotations.AfterInject;
+import com.googlecode.androidannotations.annotations.EBean;
+import com.googlecode.androidannotations.annotations.RootContext;
 import com.j256.ormlite.android.AndroidDatabaseResults;
 import com.j256.ormlite.dao.CloseableIterator;
 import com.j256.ormlite.dao.Dao;
@@ -17,28 +20,17 @@ import com.j256.ormlite.stmt.QueryBuilder;
 import de.vanmar.android.ilikepodcasts.library.bo.Feed;
 import de.vanmar.android.ilikepodcasts.library.bo.Item;
 
+@EBean
 public class DatabaseManager {
 
-	private static DatabaseManager instance;
+	private DatabaseHelper helper;
 
-	public static synchronized void init(final Context ctx) {
-		if (null == instance) {
-			instance = new DatabaseManager(ctx);
-		}
-	}
+	@RootContext
+	Context context;
 
-	protected static void forceInit(final Context ctx) {
-		instance = new DatabaseManager(ctx);
-	}
-
-	public static DatabaseManager getInstance() {
-		return instance;
-	}
-
-	private final DatabaseHelper helper;
-
-	protected DatabaseManager(final Context ctx) {
-		helper = new DatabaseHelper(ctx);
+	@AfterInject
+	public void afterInjection() {
+		helper = new DatabaseHelper(context);
 	}
 
 	protected DatabaseHelper getHelper() {

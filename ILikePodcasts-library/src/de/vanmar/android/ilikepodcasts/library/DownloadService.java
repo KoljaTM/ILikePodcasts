@@ -45,6 +45,9 @@ public class DownloadService extends Service {
 	@Bean
 	UiHelper uiHelper;
 
+	@Bean
+	DatabaseManager dbManager;
+
 	private static final int DOWNLOAD_NOTIFICATION = 34;
 	private final DownloadServiceBinder myServiceBinder = new DownloadServiceBinder();
 
@@ -90,7 +93,7 @@ public class DownloadService extends Service {
 			}
 			publishDownloadComplete(itemToDownload);
 			itemToDownload.setMediaPath(filename);
-			DatabaseManager.getInstance().saveItem(itemToDownload);
+			dbManager.saveItem(itemToDownload);
 			getContentResolver().notifyChange(
 					Uri.parse(getString(R.string.episodeContentProviderUri)),
 					null);

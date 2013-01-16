@@ -60,6 +60,9 @@ public class MainActivity extends FragmentActivity implements
 	@Bean
 	protected PlaylistManager playlistManager;
 
+	@Bean
+	protected DatabaseManager dbManager;
+
 	@ViewById(resName = "fragment_container")
 	protected ViewAnimator fragmentContainer;
 
@@ -87,7 +90,6 @@ public class MainActivity extends FragmentActivity implements
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		DatabaseManager.init(this);
 
 		bindMediaplayerService();
 		bindDownloadService();
@@ -214,7 +216,7 @@ public class MainActivity extends FragmentActivity implements
 	@Background
 	public void onItemSelected(final Integer itemId) {
 		try {
-			final Item item = DatabaseManager.getInstance().getItem(itemId);
+			final Item item = dbManager.getItem(itemId);
 			if (item.getMediaPath() == null) {
 				startDownload(item);
 			} else {
@@ -241,7 +243,7 @@ public class MainActivity extends FragmentActivity implements
 	@Background
 	public void onItemPlay(final Integer itemId) {
 		try {
-			mpService.play(DatabaseManager.getInstance().getItem(itemId));
+			mpService.play(dbManager.getItem(itemId));
 		} catch (final SQLException e) {
 			uiHelper.displayError(e);
 		}
