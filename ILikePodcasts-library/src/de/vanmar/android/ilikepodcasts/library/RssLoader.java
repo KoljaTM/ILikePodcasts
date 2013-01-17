@@ -53,7 +53,7 @@ public class RssLoader {
 		final XmlPullParser xpp = factory.newPullParser();
 
 		// We will get the XML from an input stream
-		xpp.setInput(getInputStream(url), "UTF_8");
+		xpp.setInput(getInputStream(url), "UTF-8");
 
 		boolean insideItem = false;
 
