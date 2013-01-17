@@ -82,6 +82,6 @@ public class RssService extends Service {
 	private void refreshContentProvider() {
 		getApplicationContext().getContentResolver().notifyChange(
 				Uri.parse(getApplicationContext().getString(
-						R.string.feedContentProviderUri)), null);
+						R.string.episodeContentProviderUri)), null);
 	}
 }
