@@ -51,11 +51,11 @@
         </service>
         
         <service
-            android:name=".DownloadService_" >
+            android:name=".download.DownloadService_" >
         </service>
         
         <service
-            android:name=".RssService_" >
+            android:name=".rss.RssService_" >
         </service>
         
     </application>

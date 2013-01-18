@@ -2,6 +2,8 @@ package de.vanmar.android.ilikepodcasts.unittest;
 
 import static org.junit.Assert.assertTrue;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 
 import java.io.File;
@@ -10,6 +12,12 @@ import java.io.IOException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLStreamHandler;
+import java.util.concurrent.Executor;
+
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
+
+import com.googlecode.androidannotations.api.BackgroundExecutor;
 
 public class TestUtil {
 
@@ -35,6 +43,20 @@ public class TestUtil {
 		};
 		final URL url = new URL("http://foo.bar", "foo.bar", 80, "", handler);
 		return url;
+	}
+
+	public static void mockBackgroundExecutor(final Executor executor) {
+		BackgroundExecutor.setExecutor(executor);
+		doAnswer(new Answer<Void>() {
+
+			@Override
+			public Void answer(final InvocationOnMock invocation)
+					throws Throwable {
+				final Runnable runnable = (Runnable) invocation.getArguments()[0];
+				runnable.run();
+				return null;
+			}
+		}).when(executor).execute(any(Runnable.class));
 	}
 
 }

@@ -1,4 +1,4 @@
-package de.vanmar.android.ilikepodcasts.library;
+package de.vanmar.android.ilikepodcasts.library.rss;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
@@ -23,6 +23,7 @@ import com.xtremelabs.robolectric.RobolectricTestRunner;
 
 import de.vanmar.android.ilikepodcasts.library.bo.Feed;
 import de.vanmar.android.ilikepodcasts.library.bo.Item;
+import de.vanmar.android.ilikepodcasts.library.rss.RssLoader;
 import de.vanmar.android.ilikepodcasts.unittest.TestUtil;
 
 @RunWith(RobolectricTestRunner.class)

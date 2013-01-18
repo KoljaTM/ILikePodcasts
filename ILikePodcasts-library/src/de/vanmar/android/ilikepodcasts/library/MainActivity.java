@@ -28,6 +28,7 @@ import de.vanmar.android.ilikepodcasts.library.IRssService.Callback;
 import de.vanmar.android.ilikepodcasts.library.bo.Feed;
 import de.vanmar.android.ilikepodcasts.library.bo.Item;
 import de.vanmar.android.ilikepodcasts.library.db.DatabaseManager;
+import de.vanmar.android.ilikepodcasts.library.download.DownloadService_;
 import de.vanmar.android.ilikepodcasts.library.fragment.EpisodesFragment;
 import de.vanmar.android.ilikepodcasts.library.fragment.EpisodesFragment.EpisodesFragmentListener;
 import de.vanmar.android.ilikepodcasts.library.fragment.FeedsFragment;
@@ -36,6 +37,7 @@ import de.vanmar.android.ilikepodcasts.library.fragment.PlayerFragment;
 import de.vanmar.android.ilikepodcasts.library.fragment.PlayerFragment.PlayerFragmentListener;
 import de.vanmar.android.ilikepodcasts.library.fragment.PlaylistFragment.PlaylistFragmentListener;
 import de.vanmar.android.ilikepodcasts.library.playlist.PlaylistManager;
+import de.vanmar.android.ilikepodcasts.library.rss.RssService_;
 import de.vanmar.android.ilikepodcasts.library.search.SearchActivity_;
 import de.vanmar.android.ilikepodcasts.library.util.UiHelper;
 

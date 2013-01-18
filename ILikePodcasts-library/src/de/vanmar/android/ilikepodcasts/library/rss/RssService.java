@@ -1,4 +1,4 @@
-package de.vanmar.android.ilikepodcasts.library;
+package de.vanmar.android.ilikepodcasts.library.rss;
 
 import java.util.HashSet;
 import java.util.List;
@@ -13,7 +13,9 @@ import android.os.IBinder;
 import com.googlecode.androidannotations.annotations.Bean;
 import com.googlecode.androidannotations.annotations.EService;
 
+import de.vanmar.android.ilikepodcasts.library.IRssService;
 import de.vanmar.android.ilikepodcasts.library.IRssService.Callback;
+import de.vanmar.android.ilikepodcasts.library.R;
 import de.vanmar.android.ilikepodcasts.library.bo.Feed;
 import de.vanmar.android.ilikepodcasts.library.db.DatabaseManager;
 import de.vanmar.android.ilikepodcasts.library.util.UiHelper;

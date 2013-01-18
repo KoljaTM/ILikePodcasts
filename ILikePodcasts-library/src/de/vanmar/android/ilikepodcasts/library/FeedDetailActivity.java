@@ -17,6 +17,7 @@ import com.googlecode.androidannotations.annotations.UiThread;
 import com.googlecode.androidannotations.annotations.ViewById;
 
 import de.vanmar.android.ilikepodcasts.library.bo.Feed;
+import de.vanmar.android.ilikepodcasts.library.rss.RssLoader;
 import de.vanmar.android.ilikepodcasts.library.util.UiHelper;
 
 @EActivity(resName = "feeddetail")
