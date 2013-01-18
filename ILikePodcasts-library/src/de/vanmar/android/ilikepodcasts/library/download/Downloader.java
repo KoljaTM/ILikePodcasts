@@ -35,12 +35,11 @@ public class Downloader {
 	@Bean
 	PlaylistManager playlistManager;
 
-	public void download(final Item itemToDownload,
+	public void download(final Item itemToDownload, final URL url,
 			final Set<Callback> callbacks) throws IOException, SQLException {
 		OutputStream output = null;
 		InputStream input = null;
 		try {
-			final URL url = new URL(itemToDownload.getMediaUrl());
 			final URLConnection connection = url.openConnection();
 			connection.connect();
 			// this will be useful so that you can show a typical 0-100%
@@ -56,8 +55,7 @@ public class Downloader {
 			// download the file
 			input = new BufferedInputStream(url.openStream());
 			final String filename = ILikePodcastsApplication.FILE_DIR
-					+ File.separator + FILE_PREFIX
-					+ itemToDownload.getMediaUrl().hashCode() + ".mp3";
+					+ File.separator + FILE_PREFIX + url.hashCode() + ".mp3";
 			output = new BufferedOutputStream(new FileOutputStream(new File(
 					SDCardRoot, filename)), 8192);
 

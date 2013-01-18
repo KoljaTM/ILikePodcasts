@@ -30,8 +30,10 @@ public class TestUtil {
 				+ filename);
 		assertTrue("Mock HTML File " + filename + " not found", file.exists());
 		final URLConnection mockConnection = mock(URLConnection.class);
-		given(mockConnection.getInputStream()).willReturn(
-				new FileInputStream(file));
+		final FileInputStream inputStream = new FileInputStream(file);
+		given(mockConnection.getInputStream()).willReturn(inputStream);
+		given(mockConnection.getContentLength()).willReturn(
+				inputStream.available());
 
 		final URLStreamHandler handler = new URLStreamHandler() {
 

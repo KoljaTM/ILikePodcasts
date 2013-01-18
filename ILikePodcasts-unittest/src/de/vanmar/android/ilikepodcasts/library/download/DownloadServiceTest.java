@@ -7,8 +7,9 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.verify;
 
 import java.io.IOException;
+import java.net.URL;
 import java.sql.SQLException;
-import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.concurrent.Executor;
 
@@ -41,6 +42,8 @@ public class DownloadServiceTest {
 	private Downloader downloader;
 	@Mock
 	private Executor background;
+	@Mock
+	private Callback callback;
 
 	@Before
 	public void prepare() {
@@ -58,12 +61,18 @@ public class DownloadServiceTest {
 			SQLException {
 		// assume
 		final Item item = anItem().build();
+		final HashSet<Callback> callbacks = new HashSet<Callback>();
+		callbacks.add(callback);
+
+		// given
+		binder.registerCallback(callback);
 
 		// when
 		binder.startDownload(item);
 
 		// then
-		verify(downloader).download(item, Collections.<Callback> emptySet());
+		verify(downloader).download(item, new URL(item.getMediaUrl()),
+				callbacks);
 		verify(background).execute(any(Runnable.class));
 		final Uri uri = Uri
 				.parse("content://de.vanmar.android.ilikepodcasts.EpisodeContentProvider/episodes");

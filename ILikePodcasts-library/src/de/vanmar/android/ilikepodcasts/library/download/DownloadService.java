@@ -1,5 +1,6 @@
 package de.vanmar.android.ilikepodcasts.library.download;
 
+import java.net.URL;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Queue;
@@ -47,7 +48,9 @@ public class DownloadService extends Service {
 	@Background
 	void startDownload(final Item itemToDownload) {
 		try {
-			downloader.download(itemToDownload, myServiceBinder.callbacks);
+			downloader.download(itemToDownload,
+					new URL(itemToDownload.getMediaUrl()),
+					myServiceBinder.callbacks);
 			getContentResolver().notifyChange(
 					Uri.parse(getString(R.string.episodeContentProviderUri)),
 					null);

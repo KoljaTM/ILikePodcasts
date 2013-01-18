@@ -51,11 +51,11 @@
         </service>
         
         <service
-            android:name="de.vanmar.android.ilikepodcasts.library.DownloadService_" >
+            android:name="de.vanmar.android.ilikepodcasts.library.download.DownloadService_" >
         </service>
         
              <service
-            android:name="de.vanmar.android.ilikepodcasts.library.RssService_" >
+            android:name="de.vanmar.android.ilikepodcasts.library.rss.RssService_" >
         </service>
     </application>
 
