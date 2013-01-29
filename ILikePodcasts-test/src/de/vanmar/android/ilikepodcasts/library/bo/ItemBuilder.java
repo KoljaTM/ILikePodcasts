@@ -15,7 +15,7 @@ public class ItemBuilder {
 	private String mediaType = "mediaType";
 	private Feed feed;
 	private Integer playlistIndex;
-	private String mediaUrl = "mediaUrl";
+	private String mediaUrl = "http://media.Url";
 
 	public Item build() {
 		final Item result = new Item();

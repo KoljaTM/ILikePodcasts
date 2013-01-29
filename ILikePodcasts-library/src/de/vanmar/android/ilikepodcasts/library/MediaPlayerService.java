@@ -12,6 +12,7 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
 import android.media.AudioManager;
+import android.media.AudioManager.OnAudioFocusChangeListener;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnCompletionListener;
 import android.os.Binder;
@@ -23,6 +24,7 @@ import android.util.Log;
 import com.googlecode.androidannotations.annotations.Background;
 import com.googlecode.androidannotations.annotations.Bean;
 import com.googlecode.androidannotations.annotations.EService;
+import com.googlecode.androidannotations.annotations.SystemService;
 
 import de.vanmar.android.ilikepodcasts.library.IMediaPlayerService.Callback;
 import de.vanmar.android.ilikepodcasts.library.PlayerStatus.PlayerState;
@@ -40,12 +42,34 @@ public class MediaPlayerService extends Service {
 	@Bean
 	PlaylistManager playlistManager;
 
+	@SystemService
+	AudioManager audioManager;
+
 	public static final String EXTRA_ITEM = "de.vanmar.android.ilikepodcasts.mediaplayerservice.location";
 
 	private static final int MEDIAPLAYER_NOTIFICATION = 17;
+	private static final String LOG_TAG = "MediaPlayerService";
+
 	private final MediaPlayerServiceBinder myServiceBinder = new MediaPlayerServiceBinder();
 
 	private MediaPlayer mediaPlayer;
+
+	private final OnAudioFocusChangeListener onAudioFocusChangeListener = new OnAudioFocusChangeListener() {
+
+		@Override
+		public void onAudioFocusChange(final int focusChange) {
+			if (focusChange == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT) {
+				// Pause playback
+				pausePlayback();
+			} else if (focusChange == AudioManager.AUDIOFOCUS_GAIN) {
+				// Resume playback
+				play();
+			} else if (focusChange == AudioManager.AUDIOFOCUS_LOSS) {
+				// Stop playback
+				pausePlayback();
+			}
+		}
+	};
 
 	private final OnCompletionListener onCompletionListener = new OnCompletionListener() {
 
@@ -92,7 +116,6 @@ public class MediaPlayerService extends Service {
 	public class MediaPlayerServiceBinder extends Binder implements
 			IMediaPlayerService {
 
-		private static final String LOG_TAG = "MediaPlayerService";
 		private final Set<Callback> callbacks = new HashSet<IMediaPlayerService.Callback>();
 
 		@Override
@@ -107,21 +130,7 @@ public class MediaPlayerService extends Service {
 
 		@Override
 		public void play() {
-			try {
-				if (mediaPlayer != null) {
-					startPlay();
-				} else {
-					final Item playPosition = playlistManager.getPlayPosition();
-					if (playPosition != null) {
-						Log.i(LOG_TAG,
-								"Play requested: " + playPosition.getTitle()
-										+ playPosition.getPosition());
-						playItem(playPosition);
-					}
-				}
-			} catch (final SQLException e) {
-				uiHelper.displayError(e);
-			}
+			MediaPlayerService.this.play();
 		}
 
 		@Override
@@ -208,6 +217,23 @@ public class MediaPlayerService extends Service {
 		}
 	}
 
+	private void play() {
+		try {
+			if (mediaPlayer != null) {
+				startPlay();
+			} else {
+				final Item playPosition = playlistManager.getPlayPosition();
+				if (playPosition != null) {
+					Log.i(LOG_TAG, "Play requested: " + playPosition.getTitle()
+							+ playPosition.getPosition());
+					playItem(playPosition);
+				}
+			}
+		} catch (final SQLException e) {
+			uiHelper.displayError(e);
+		}
+	}
+
 	private void playItem(final Item item) {
 		savePositionInCurrentItem();
 		playing = item;
@@ -257,10 +283,14 @@ public class MediaPlayerService extends Service {
 	}
 
 	private void startPlay() {
-		mediaPlayer.start();
-		inForeground(playing);
-		for (final Callback callback : myServiceBinder.callbacks) {
-			callback.playStarted(playing, mediaPlayer.getDuration());
+		if (AudioManager.AUDIOFOCUS_REQUEST_GRANTED == audioManager
+				.requestAudioFocus(onAudioFocusChangeListener,
+						AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN)) {
+			mediaPlayer.start();
+			inForeground(playing);
+			for (final Callback callback : myServiceBinder.callbacks) {
+				callback.playStarted(playing, mediaPlayer.getDuration());
+			}
 		}
 	}
 
@@ -268,12 +298,16 @@ public class MediaPlayerService extends Service {
 		if (mediaPlayer != null) {
 			mediaPlayer.release();
 		}
-		mediaPlayer = new MediaPlayer();
+		mediaPlayer = createMediaPlayer();
 		mediaPlayer.setOnCompletionListener(onCompletionListener);
 		return mediaPlayer;
 	}
 
-	public void pausePlayback() {
+	protected MediaPlayer createMediaPlayer() {
+		return new MediaPlayer();
+	}
+
+	private void pausePlayback() {
 		stopForeground();
 		if (mediaPlayer != null && mediaPlayer.isPlaying()) {
 			mediaPlayer.pause();
@@ -309,6 +343,7 @@ public class MediaPlayerService extends Service {
 	}
 
 	private void cleanup() {
+		audioManager.abandonAudioFocus(onAudioFocusChangeListener);
 		if (mediaPlayer != null) {
 			mediaPlayer.release();
 			mediaPlayer = null;
