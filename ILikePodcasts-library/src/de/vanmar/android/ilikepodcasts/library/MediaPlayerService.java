@@ -56,17 +56,29 @@ public class MediaPlayerService extends Service {
 
 	private final OnAudioFocusChangeListener onAudioFocusChangeListener = new OnAudioFocusChangeListener() {
 
+		private boolean interrupted = false;
+
 		@Override
 		public void onAudioFocusChange(final int focusChange) {
 			if (focusChange == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT) {
 				// Pause playback
-				pausePlayback();
+				interrupt();
 			} else if (focusChange == AudioManager.AUDIOFOCUS_GAIN) {
 				// Resume playback
-				play();
+				if (interrupted) {
+					play();
+					interrupted = false;
+				}
 			} else if (focusChange == AudioManager.AUDIOFOCUS_LOSS) {
 				// Stop playback
+				interrupt();
+			}
+		}
+
+		private void interrupt() {
+			if (mediaPlayer.isPlaying()) {
 				pausePlayback();
+				interrupted = true;
 			}
 		}
 	};

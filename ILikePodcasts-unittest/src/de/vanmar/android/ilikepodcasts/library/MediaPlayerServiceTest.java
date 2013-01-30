@@ -6,6 +6,8 @@ import static org.mockito.BDDMockito.willReturn;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 
@@ -96,6 +98,18 @@ public class MediaPlayerServiceTest {
 		startPlay();
 
 		// then
+		verify(audioManager)
+				.requestAudioFocus(any(OnAudioFocusChangeListener.class),
+						eq(AudioManager.STREAM_MUSIC),
+						eq(AudioManager.AUDIOFOCUS_GAIN));
+	}
+
+	@Test
+	public void shouldPauseOnFocusLoss() throws IOException {
+		// given
+		startPlay();
+
+		// then
 		final ArgumentCaptor<OnAudioFocusChangeListener> captor = ArgumentCaptor
 				.forClass(OnAudioFocusChangeListener.class);
 		verify(audioManager)
@@ -111,15 +125,52 @@ public class MediaPlayerServiceTest {
 	}
 
 	@Test
-	public void shouldPauseOnFocusLoss() throws IOException {
+	public void shouldResumePlayOnRegainingFocus() throws IOException {
 		// given
 		startPlay();
 
 		// then
+		final ArgumentCaptor<OnAudioFocusChangeListener> captor = ArgumentCaptor
+				.forClass(OnAudioFocusChangeListener.class);
 		verify(audioManager)
-				.requestAudioFocus(any(OnAudioFocusChangeListener.class),
+				.requestAudioFocus(captor.capture(),
 						eq(AudioManager.STREAM_MUSIC),
 						eq(AudioManager.AUDIOFOCUS_GAIN));
+
+		// when
+		captor.getValue().onAudioFocusChange(AudioManager.AUDIOFOCUS_LOSS);
+
+		// then
+		verify(mediaPlayer).pause();
+
+		// when
+		captor.getValue().onAudioFocusChange(AudioManager.AUDIOFOCUS_GAIN);
+
+		// then
+		verify(mediaPlayer).start();
+	}
+
+	@Test
+	public void shouldNotResumePlayOnRegainingFocusWhenNotInterrupted()
+			throws IOException {
+		// given
+		startPlay();
+		binder.pause();
+
+		// then
+		final ArgumentCaptor<OnAudioFocusChangeListener> captor = ArgumentCaptor
+				.forClass(OnAudioFocusChangeListener.class);
+		verify(audioManager)
+				.requestAudioFocus(captor.capture(),
+						eq(AudioManager.STREAM_MUSIC),
+						eq(AudioManager.AUDIOFOCUS_GAIN));
+
+		// when
+		captor.getValue().onAudioFocusChange(AudioManager.AUDIOFOCUS_LOSS);
+		captor.getValue().onAudioFocusChange(AudioManager.AUDIOFOCUS_GAIN);
+
+		// then
+		verify(mediaPlayer, never()).start();
 	}
 
 	@Test
@@ -154,5 +205,6 @@ public class MediaPlayerServiceTest {
 				AudioManager.AUDIOFOCUS_REQUEST_GRANTED);
 
 		binder.play(item);
+		reset(mediaPlayer);
 	}
 }
