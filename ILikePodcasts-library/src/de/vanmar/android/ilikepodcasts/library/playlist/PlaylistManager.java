@@ -1,10 +1,12 @@
 package de.vanmar.android.ilikepodcasts.library.playlist;
 
+import java.io.File;
 import java.sql.SQLException;
 
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.Uri;
+import android.os.Environment;
 import android.preference.PreferenceManager;
 
 import com.googlecode.androidannotations.annotations.Bean;
@@ -88,7 +90,8 @@ public class PlaylistManager {
 			lastPlaylistIndex = item.getPlaylistIndex() == null ? 0 : item
 					.getPlaylistIndex();
 			if (removeFromPlaylist) {
-				dbManager.saveItemPlaylistIndex(item, null);
+				dbManager.markItemListened(item);
+				deleteMediaFile(item.getMediaPath());
 				refreshItems();
 			}
 		} else {
@@ -98,6 +101,12 @@ public class PlaylistManager {
 				.getNextItemInPlaylist(lastPlaylistIndex);
 
 		return nextItemInPlaylist;
+	}
+
+	private void deleteMediaFile(final String mediaPath) {
+		final File SDCardRoot = Environment.getExternalStorageDirectory();
+		final File fileToDelete = new File(SDCardRoot, mediaPath);
+		fileToDelete.delete();
 	}
 
 	public void setLastPlayPosition(final Item item, final int position) {

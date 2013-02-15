@@ -109,6 +109,14 @@ public class DatabaseManager {
 		itemDao.createOrUpdate(item);
 	}
 
+	public void markItemListened(final Item item) throws SQLException {
+		final Dao<Item, Integer> itemDao = getHelper().getItemDao();
+		item.setPlaylistIndex(null);
+		item.setListened(true);
+
+		itemDao.createOrUpdate(item);
+	}
+
 	public Item getItem(final int itemId) throws SQLException {
 		return getHelper().getItemDao().queryForId(itemId);
 	}

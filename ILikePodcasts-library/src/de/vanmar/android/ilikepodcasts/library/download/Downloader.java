@@ -107,5 +107,4 @@ public class Downloader {
 			callback.onDownloadCompleted(itemToDownload);
 		}
 	}
-
 }
