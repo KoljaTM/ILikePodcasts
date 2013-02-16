@@ -21,11 +21,13 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 
+import android.content.Intent;
 import android.media.AudioManager;
 import android.media.AudioManager.OnAudioFocusChangeListener;
 import android.media.MediaPlayer;
 import android.os.Environment;
 
+import com.xtremelabs.robolectric.Robolectric;
 import com.xtremelabs.robolectric.RobolectricTestRunner;
 
 import de.vanmar.android.ilikepodcasts.library.IMediaPlayerService.Callback;
@@ -54,10 +56,10 @@ public class MediaPlayerServiceTest {
 				return mediaPlayer;
 			}
 		};
-		binder = (MediaPlayerServiceBinder) service.onBind(null);
-		binder.registerCallback(callback);
 		service.playlistManager = playlistManager;
 		service.audioManager = audioManager;
+		binder = (MediaPlayerServiceBinder) service.onBind(null);
+		binder.registerCallback(callback);
 	}
 
 	@Test
@@ -184,6 +186,19 @@ public class MediaPlayerServiceTest {
 		// then
 		verify(mediaPlayer).pause();
 		verify(callback).playPaused();
+	}
+
+	@Test
+	public void shouldPausePlayOnAudioBecomingNoisy() throws IOException {
+		// given
+		startPlay();
+
+		// when
+		Robolectric.shadowOf(service).sendBroadcast(
+				new Intent(AudioManager.ACTION_AUDIO_BECOMING_NOISY));
+
+		// then
+		verify(mediaPlayer).pause();
 	}
 
 	private void startPlay() throws IOException {

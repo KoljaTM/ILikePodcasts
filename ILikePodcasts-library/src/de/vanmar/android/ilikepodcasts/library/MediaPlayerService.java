@@ -10,7 +10,10 @@ import android.annotation.SuppressLint;
 import android.app.Notification;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.media.AudioManager;
 import android.media.AudioManager.OnAudioFocusChangeListener;
 import android.media.MediaPlayer;
@@ -92,6 +95,20 @@ public class MediaPlayerService extends Service {
 
 	};
 
+	private final IntentFilter intentFilterAudioNoisy = new IntentFilter(
+			AudioManager.ACTION_AUDIO_BECOMING_NOISY);
+
+	private final BroadcastReceiver audioBecomingNoisyReceiver = new BroadcastReceiver() {
+
+		@Override
+		public void onReceive(final Context context, final Intent intent) {
+			if (AudioManager.ACTION_AUDIO_BECOMING_NOISY.equals(intent
+					.getAction())) {
+				pausePlayback();
+			}
+		}
+	};
+
 	public Item playing;
 
 	@Override
@@ -107,6 +124,7 @@ public class MediaPlayerService extends Service {
 	}
 
 	private void inForeground(final Item item) {
+		registerReceiver(audioBecomingNoisyReceiver, intentFilterAudioNoisy);
 		final Intent notificationIntent = new Intent(this, MainActivity_.class);
 		final PendingIntent pendingIntent = PendingIntent.getActivity(this, 0,
 				notificationIntent, 0);
@@ -122,6 +140,7 @@ public class MediaPlayerService extends Service {
 	}
 
 	private void stopForeground() {
+		// unregisterReceiver(audioBecomingNoisyReceiver);
 		stopForeground(true);
 	}
 
