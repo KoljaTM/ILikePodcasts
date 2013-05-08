@@ -2,6 +2,7 @@ package de.vanmar.android.ilikepodcasts.library.playlist;
 
 import static de.vanmar.android.ilikepodcasts.library.bo.ItemBuilder.anItem;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.CoreMatchers.sameInstance;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -107,6 +108,7 @@ public class PlaylistManagerTest {
 		// then
 		verify(dbManager).markItemListened(item);
 		assertFalse(expectedFile.exists());
+		assertThat(item.getMediaPath(), is(nullValue()));
 	}
 
 	@Test

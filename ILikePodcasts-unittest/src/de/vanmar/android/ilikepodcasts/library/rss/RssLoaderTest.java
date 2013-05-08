@@ -23,7 +23,6 @@ import com.xtremelabs.robolectric.RobolectricTestRunner;
 
 import de.vanmar.android.ilikepodcasts.library.bo.Feed;
 import de.vanmar.android.ilikepodcasts.library.bo.Item;
-import de.vanmar.android.ilikepodcasts.library.rss.RssLoader;
 import de.vanmar.android.ilikepodcasts.unittest.TestUtil;
 
 @RunWith(RobolectricTestRunner.class)
@@ -31,7 +30,7 @@ public class RssLoaderTest {
 
 	private RssLoader rssLoader;
 
-	private Context context = new Activity();
+	private final Context context = new Activity();
 
 	@Before
 	public void prepare() {

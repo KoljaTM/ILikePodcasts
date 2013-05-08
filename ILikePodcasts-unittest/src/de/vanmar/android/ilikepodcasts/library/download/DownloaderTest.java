@@ -36,7 +36,7 @@ import de.vanmar.android.ilikepodcasts.unittest.TestUtil;
 public class DownloaderTest {
 
 	private Downloader downloader;
-	private Context context = new Activity();
+	private final Context context = new Activity();
 
 	@Mock
 	private PlaylistManager playlistManager;

@@ -90,8 +90,10 @@ public class PlaylistManager {
 			lastPlaylistIndex = item.getPlaylistIndex() == null ? 0 : item
 					.getPlaylistIndex();
 			if (removeFromPlaylist) {
+				final String mediaPath = item.getMediaPath();
+				item.setMediaPath(null);
 				dbManager.markItemListened(item);
-				deleteMediaFile(item.getMediaPath());
+				deleteMediaFile(mediaPath);
 				refreshItems();
 			}
 		} else {

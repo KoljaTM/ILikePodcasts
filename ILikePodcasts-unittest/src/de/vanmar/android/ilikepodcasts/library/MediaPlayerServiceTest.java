@@ -40,11 +40,11 @@ public class MediaPlayerServiceTest {
 	private MediaPlayerService service;
 	private MediaPlayerServiceBinder binder;
 
-	private Callback callback = mock(Callback.class);
-	private PlaylistManager playlistManager = mock(PlaylistManager.class);
+	private final Callback callback = mock(Callback.class);
+	private final PlaylistManager playlistManager = mock(PlaylistManager.class);
 
 	private MediaPlayer mediaPlayer;
-	private AudioManager audioManager = mock(AudioManager.class);
+	private final AudioManager audioManager = mock(AudioManager.class);
 
 	@Before
 	public void prepare() {
