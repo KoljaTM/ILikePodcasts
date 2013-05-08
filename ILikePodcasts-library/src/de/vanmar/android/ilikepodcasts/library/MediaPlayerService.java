@@ -285,6 +285,11 @@ public class MediaPlayerService extends Service {
 		} catch (final Exception e) {
 			cleanup();
 			uiHelper.displayError(e);
+			try {
+				playing = playlistManager.getNextItem(playing, true);
+			} catch (final SQLException e1) {
+				e1.printStackTrace();
+			}
 		}
 	}
 
