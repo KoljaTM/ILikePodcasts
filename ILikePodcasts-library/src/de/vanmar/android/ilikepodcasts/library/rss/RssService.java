@@ -75,7 +75,11 @@ public class RssService extends Service {
 		final List<Feed> feeds = dbManager.getAllFeeds();
 		for (final Feed feed : feeds) {
 			publishFeedUpdateStarted(feed);
-			rssLoader.updateFeed(feed);
+			try {
+				rssLoader.updateFeed(feed);
+			} catch (final Exception ex) {
+				uiHelper.displayError(ex);
+			}
 			publishFeedUpdateComplete(feed);
 		}
 		refreshContentProvider();
